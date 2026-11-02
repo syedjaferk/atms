@@ -4,6 +4,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+from atms_contracts import network
 from atms_contracts.models import Agency, Location
 
 EARTH_M = 6_371_000
@@ -38,19 +39,7 @@ class Ranked:
     eta_s: int
 
 
-SEED = [
-    Facility("amb-bharati", "Bharati Hospital", Agency.ambulance, Location(lat=18.4637, lon=73.8586)),
-    Facility("amb-sassoon", "Sassoon General Hospital", Agency.ambulance, Location(lat=18.5276, lon=73.8707)),
-    Facility("amb-ruby", "Ruby Hall Clinic", Agency.ambulance, Location(lat=18.5314, lon=73.8774)),
-    Facility("pol-katraj", "Katraj Police Station", Agency.police, Location(lat=18.4529, lon=73.8650)),
-    Facility("pol-sahakar", "Sahakarnagar Police Station", Agency.police, Location(lat=18.4950, lon=73.8553)),
-    Facility("hwy-katraj", "Highway Patrol Katraj", Agency.highway_patrol, Location(lat=18.4560, lon=73.8480)),
-    Facility("hwy-warje", "Highway Patrol Warje", Agency.highway_patrol, Location(lat=18.4830, lon=73.8000)),
-    Facility("fire-katraj", "Katraj Fire Station", Agency.fire, Location(lat=18.4478, lon=73.8590)),
-    Facility("fire-kondhwa", "Kondhwa Fire Station", Agency.fire, Location(lat=18.4720, lon=73.8890)),
-    Facility("tow-katraj", "Katraj Tow Depot", Agency.tow, Location(lat=18.4505, lon=73.8420)),
-    Facility("tow-warje", "Warje Tow Depot", Agency.tow, Location(lat=18.4800, lon=73.8000)),
-]
+SEED = [Facility(st.id, st.name, st.agency, st.location) for st in network.load().stations]
 
 
 class FacilityService:

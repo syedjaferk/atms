@@ -626,3 +626,17 @@ Found while building it. The map endpoint and the once a minute forecast cycle e
 
 Limits. The simulator clip is a test pattern, so there is nothing to see of the accident itself. The page shows what the detector reported (confidence, severity, lanes, cameras) but not a frame by frame breakdown, because the edge sends only the combined result. A manual dispatch to an agency that was not asked, an operator written message board, and sending a notice by hand are not built.
 
+
+## 15. Areas, the video catalog and the detector node
+
+Added after the operator console. Three ideas, each its own part.
+
+**Network of areas.** `src/atms_contracts/data/network.json` lists areas (city and road), the cameras on each and the stations that answer there. The edge tools, the dispatch step, the notification step, the map and the CCTV page all read it through `atms_contracts.network`, so a new city is a data change.
+
+**Video catalog.** `dataset/videos.json` (see [dataset.md](dataset.md)) gives each camera a set of videos, some good and some bad. The core serves them through `/v1/cctv` with short lived signed links, and never decodes video itself.
+
+**Detector node.** `atms_edge.service` is the compute box next to a camera, run as its own container. `POST /v1/analyze` queues a job for a catalog video. One worker runs the two models over 8 to 24 frames, reports progress per frame, and for a confirmed accident cuts a 12 second clip and publishes `accident.detected` and `video.ready` over MQTT from the camera the video belongs to. The core reaches it through `ATMS_DETECTOR_URL`, so the browser has one origin and one token.
+
+**Nearby notices.** A station contact (`stn-<id>`) is only notified when its station is among the two nearest of its agency to the incident, or was actually asked to dispatch. A crash in Chennai never pages Pune. Duty officers are one per area.
+
+**Unit arrival.** The agency simulator now works out the arrival time from the real distance of the station that was asked. The map moves each unit along the road route by the share of that time that has passed.

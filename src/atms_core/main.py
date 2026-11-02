@@ -15,6 +15,10 @@ Environment
   ATMS_TOKENS              JSON {"token": {"name": "...", "agency": "police" | null}}
   ATMS_SIGNING_SECRET      evidence link signing
   ATMS_MEDIA_DIR           where clips live, evidence refs are relative to it (default simulator-out)
+  ATMS_DATASET_DIR         dataset folder with videos.json and the stitched clips (default dataset)
+  ATMS_VIDEO_DIR           your own recordings (default videos)
+  ATMS_DETECTOR_URL        detector node, for the Analyze button on the CCTV page (for example http://localhost:8300)
+  ATMS_AGENCIES_URL        also decides the stations' notice addresses
 """
 from __future__ import annotations
 
@@ -27,11 +31,13 @@ import threading
 import httpx
 import uvicorn
 
+from atms_contracts import catalog
 from atms_contracts.models import Agency, parse_event
 
 from .api import Principal, create_api
 from .bridge import Record, RabbitBridge
 from .hub import HttpAgencyAdapter
+from .notifications import network_contacts
 from .system import build_system
 from atms_contracts.topics import KAFKA_EVENTS_TOPIC
 
@@ -127,13 +133,14 @@ async def serve() -> None:
         seed_facilities(url)
         seed_contacts(url)
         repo = PostgresRepo(url)
-        system = build_system(HttpAgencyAdapter(client), repo=repo, geo=PostgresFacilities(repo), bus=bus, forecast=build_forecast(repo), **extra)
+        system = build_system(HttpAgencyAdapter(client), repo=repo, geo=PostgresFacilities(repo), bus=bus, contacts=network_contacts(), forecast=build_forecast(repo), **extra)
         log.info("loaded %d incidents from the database", len(system.store.incidents))
     else:
         log.warning("ATMS_DATABASE_URL not set, state is lost on restart")
-        system = build_system(HttpAgencyAdapter(client), bus=bus, forecast=build_forecast(None), **extra)
+        system = build_system(HttpAgencyAdapter(client), bus=bus, contacts=network_contacts(), forecast=build_forecast(None), **extra)
     app = create_api(system, load_tokens(), os.environ.get("ATMS_SIGNING_SECRET", "dev-secret"),
-                     media_dir=os.environ.get("ATMS_MEDIA_DIR", "simulator-out"))
+                     media_dir=os.environ.get("ATMS_MEDIA_DIR", "simulator-out"),
+                     catalog=catalog.load(), detector_url=os.environ.get("ATMS_DETECTOR_URL"))
 
     if kafka:
         from .bridge import KafkaSink

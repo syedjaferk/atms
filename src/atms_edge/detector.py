@@ -88,20 +88,26 @@ class AccidentDetector:
         """Frames are PIL images from one camera, a few seconds apart. None means no accident."""
         return self.scan(frames)[0]
 
-    def scan(self, frames: Sequence, min_frames: int | None = None) -> tuple[Detection | None, list[float]]:
+    def scan(self, frames: Sequence, min_frames: int | None = None, on_frame: Callable[[int, int, float], None] | None = None,
+             ) -> tuple[Detection | None, list[float], int | None]:
         """Like analyze, plus the best accident score seen in each frame (0.0 when none).
-        min_frames overrides the confirmation rule, so a clip with a single frame can still be judged."""
+        min_frames overrides the confirmation rule, so a clip with a single frame can still be judged. on_frame(index, total, score)
+        is called after each frame, which is how a job reports progress. The last value is the index of the frame with the best
+        accident score, or None."""
         hits: list[tuple[float, Box, object]] = []
         scores: list[float] = []
-        for frame in frames:
+        for n, frame in enumerate(frames):
             found = [d for d in self.accident_fn(frame) if d["label"] == "accident"]
             scores.append(round(max((d["score"] for d in found), default=0.0), 4))
+            if on_frame:
+                on_frame(n, len(frames), scores[-1])
             found = [d for d in found if d["score"] >= self.accident_threshold]
             if found:
                 best = max(found, key=lambda d: d["score"])
                 hits.append((best["score"], _box(best), frame))
+        top = max(range(len(scores)), key=scores.__getitem__) if scores and max(scores) > 0 else None
         if len(hits) < (min_frames or self.min_confirmed_frames):
-            return None, scores
+            return None, scores, top
 
         score, box, frame = max(hits, key=lambda h: h[0])
         width, height = frame.size
@@ -118,23 +124,30 @@ class AccidentDetector:
             severity=classify_severity(count, area),
             vehicles=count, lanes=lanes, box=nbox,
             frames_confirmed=len(hits), frames_sampled=len(frames), model_version=self.model_version,
-        ), scores
+        ), scores, top
 
 
 def sample_frames(video_path: str | Path, count: int = 5) -> list:
     """Evenly spaced RGB frames from a clip."""
+    return [f for f, _ in sample_frames_timed(video_path, count)]
+
+
+def sample_frames_timed(video_path: str | Path, count: int = 5) -> list[tuple[object, float]]:
+    """Evenly spaced RGB frames with the second each one was taken at."""
     import cv2
     from PIL import Image
 
     cap = cv2.VideoCapture(str(video_path))
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    fps = cap.get(cv2.CAP_PROP_FPS) or 25.0
     if total <= 0:
         raise ValueError(f"cannot read frames from {video_path}")
     out = []
     for i in range(count):
-        cap.set(cv2.CAP_PROP_POS_FRAMES, min(total - 1, int((i + 0.5) * total / count)))
+        at = min(total - 1, int((i + 0.5) * total / count))
+        cap.set(cv2.CAP_PROP_POS_FRAMES, at)
         ok, bgr = cap.read()
         if ok:
-            out.append(Image.fromarray(cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)))
+            out.append((Image.fromarray(cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)), round(at / fps, 2)))
     cap.release()
     return out

@@ -1,4 +1,17 @@
-# Dev stack: RabbitMQ for devices, Kafka between services, Postgres with PostGIS for state.
+# ATMS, every part as its own container.
+#
+#   docker compose up --build        everything for the demo, then open http://localhost:8000/console/
+#
+# Parts
+#   rabbitmq   the MQTT broker the cameras publish to
+#   core       bridge, incident service, dispatch, notifications, forecast, API and the web console
+#   agencies   fake police, ambulance, fire, highway patrol and tow dispatch systems
+#   sms        fake SMS gateway that sends delivery receipts back
+#   detector   the edge node: runs the AI models on a video and publishes the alarm
+#   sensors    one shot, sends a few hours of road readings so the forecast has something to show
+# Optional, add --profile durable and -f compose.durable.yaml
+#   kafka, postgres   services talk over Kafka and state survives a restart
+name: atms
 services:
   rabbitmq:
     image: rabbitmq:4-management
@@ -18,17 +31,95 @@ services:
       timeout: 10s
       retries: 12
 
+  agencies:
+    build: { context: ., dockerfile: docker/core.Dockerfile }
+    image: atms-core
+    command: ["python", "-m", "atms_sim.cli", "agencies", "--port", "9100", "--reliable"]
+    ports: ["9100:9100"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:9100/v1/agencies/notices')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  sms:
+    image: atms-core
+    command: ["python", "-m", "atms_sim.cli", "sms", "--port", "9200"]
+    depends_on: { agencies: { condition: service_started } }
+    ports: ["9200:9200"]
+
+  core:
+    image: atms-core
+    command: ["python", "-m", "atms_core.main"]
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+      agencies: { condition: service_healthy }
+      sms: { condition: service_started }
+    environment:
+      ATMS_RABBIT_HOST: rabbitmq
+      ATMS_AGENCIES_URL: http://agencies:9100
+      ATMS_SMS_URL: http://sms:9200
+      ATMS_PUBLIC_URL: http://core:8000          # where the SMS gateway sends receipts
+      ATMS_FORECAST_MODEL_DIR: /app/models
+      ATMS_MEDIA_DIR: /data/media
+      ATMS_DATASET_DIR: /data/dataset
+      ATMS_VIDEO_DIR: /data/videos
+      ATMS_DETECTOR_URL: http://detector:8300
+    ports: ["8000:8000"]
+    volumes:
+      - ./models:/app/models:ro
+      - ./dataset:/data/dataset:ro
+      - ${VIDEOS_DIR:-./videos}:/data/videos:ro
+      - media:/data/media
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/healthz')"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  detector:
+    build: { context: ., dockerfile: docker/detector.Dockerfile }
+    image: atms-detector
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+    environment:
+      ATMS_BROKER_HOST: rabbitmq
+      ATMS_MEDIA_DIR: /data/media
+      ATMS_DATASET_DIR: /data/dataset
+      ATMS_VIDEO_DIR: /data/videos
+      HF_HOME: /hf
+    ports: ["8300:8300"]
+    volumes:
+      - ./dataset:/data/dataset:ro
+      - ${VIDEOS_DIR:-./videos}:/data/videos:ro
+      - media:/data/media
+      - ${HF_CACHE:-hf-cache}:/hf                # the AI models, downloaded once
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8300/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  sensors:
+    image: atms-core
+    command: ["python", "-m", "atms_sim.cli", "sensors", "--api", "http://core:8000", "--minutes", "180"]
+    depends_on:
+      core: { condition: service_healthy }
+    restart: "no"
+
   kafka:
     image: apache/kafka:3.9.0
+    profiles: [durable]
     ports:
       - "9092:9092"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://:9092,INTERNAL://:19092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,INTERNAL://kafka:19092
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -42,6 +133,7 @@ services:
       retries: 20
 
   postgres:
+    profiles: [durable]
     image: postgis/postgis:16-3.4
     ports:
       - "5433:5432"     # 5433 because 5432 is often taken on dev machines
@@ -59,3 +151,5 @@ services:
 
 volumes:
   pgdata:
+  media:
+  hf-cache:

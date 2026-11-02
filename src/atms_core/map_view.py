@@ -4,6 +4,7 @@ from __future__ import annotations
 import time
 from datetime import datetime, timezone
 
+from atms_contracts import network
 from atms_contracts.cameras import CAMERAS
 from atms_forecast.segments import SEGMENTS
 from atms_forecast.service import NoModel, StaleData
@@ -100,11 +101,22 @@ def build_map(system, now: datetime | None = None, road: dict | None = None) -> 
         "segments": segments,
         "facilities": [{"id": f.id, "name": f.name, "agency": f.agency.value, "lat": f.location.lat, "lon": f.location.lon,
                         "busy_with": busy.get(f.id, [])} for f in facilities],
-        "cameras": [{"id": c.site.camera_id, "road": c.site.road, "lat": c.location.lat, "lon": c.location.lon,
-                     "heading_deg": c.heading_deg} for c in CAMERAS.values()],
+        "areas": areas(),
+        "cameras": [{"id": c.site.camera_id, "name": c.name, "area": c.area, "road": c.site.road, "lat": c.location.lat,
+                     "lon": c.location.lon, "heading_deg": c.heading_deg} for c in CAMERAS.values()],
         "vms": [{"id": dev, "lat": lat, "lon": lon, "text": showing.get(dev)} for dev, (lat, lon) in VMS_LOCATIONS.items()],
         "incidents": incidents,
     }
+
+
+def areas() -> list[dict]:
+    """Where the system watches. An area with road sensors has speed colours already, the others get a plain line along the cameras."""
+    out = []
+    for a in network.load().areas.values():
+        sensed = any(abs(sg.lat - a.center.lat) < 0.05 and abs(sg.lon - a.center.lon) < 0.05 for sg in SEGMENTS)
+        out.append({"id": a.id, "name": a.name, "road": a.road_name, "lat": a.center.lat, "lon": a.center.lon,
+                    "corridor": [] if sensed else [list(p) for p in a.corridor]})
+    return out
 
 
 def notices(store: Store, incident_id, limit: int = 12) -> list[dict]:

@@ -147,9 +147,15 @@ tr.best td { font-weight: 650; color: var(--ok); }
 .car.highway_patrol circle { fill: #2f9e44; } .car.tow circle { fill: #7048e8; }
 .car text { font-size: 10px; font-weight: 700; fill: #fff; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
 .car.there circle { stroke: var(--accent); }
-.feed { position: absolute; left: 12px; top: 12px; width: min(340px, calc(100% - 90px)); max-height: 24%; overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.14); }
+.feed { position: absolute; left: 12px; top: 54px; width: min(340px, calc(100% - 90px)); max-height: 24%; overflow-y: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.14); }
 .feed h2 { font-size: 13px; margin: 0 0 4px; }
 .feed ul { list-style: none; margin: 0; padding: 0; }
 .feed li { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--line); }
 .feed li:last-child { border-bottom: 0; }
 .feed .ok { color: var(--free); } .feed .bad { color: var(--severe); }
+
+.areas { position: absolute; left: 12px; top: 12px; display: flex; flex-wrap: wrap; gap: 6px; max-width: calc(100% - 90px); }
+.areas button { padding: 5px 10px; font-size: 12px; background: var(--surface); }
+.areas button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); font-weight: 650; }
+.corridor { fill: none; stroke: #8a93a2; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; opacity: .55; stroke-dasharray: 2 8; }
+.cam.sel circle { stroke: var(--accent); stroke-width: 3.4; fill: #e7f0ff; }

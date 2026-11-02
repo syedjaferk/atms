@@ -96,7 +96,7 @@ def create_app(seed: int | None = None, profiles: dict[Agency, Profile] | None =
             status, body = 200, {
                 "accepted": True,
                 "unit_ref": f"{agency.value[:3].upper()}-{state.unit_counter:03d}",
-                "eta_s": state.rng.randint(*profile.eta_s),
+                "eta_s": _eta(state.rng, profile, req),
             }
         state.answers[(agency.value, req.idempotency_key)] = (status, body)
         state.calls.append((agency.value, req.idempotency_key, behavior))
@@ -113,8 +113,13 @@ def create_app(seed: int | None = None, profiles: dict[Agency, Profile] | None =
             raise HTTPException(503, "agency desk offline")
         if x_sim_behavior == "reject":
             raise HTTPException(400, "malformed")
-        state.notices.append({"agency": agency.value, **json.loads(raw)})
+        state.notices.append({"agency": agency.value, "station": request.query_params.get("station"), **json.loads(raw)})
         return {"received": True}
+
+    @app.get("/v1/agencies/notices")
+    async def received():
+        """What the agency desks have been told so far. Only the simulator has this, a real agency keeps it to itself."""
+        return {"items": state.notices[-200:]}
 
     @app.post("/v1/agencies/{agency}/cancel")
     async def cancel(agency: Agency, req: CancelRequest):
@@ -122,6 +127,18 @@ def create_app(seed: int | None = None, profiles: dict[Agency, Profile] | None =
         return {"cancelled": True}
 
     return app
+
+
+def _eta(rng: random.Random, profile: Profile, req: DispatchRequest) -> int:
+    """Time to scene. From the station's real distance when it is known, so a far station takes longer, else a random draw."""
+    from atms_contracts import network
+    from atms_core.geo import AVG_SPEED_MS, ROAD_FACTOR, haversine_m
+
+    st = next((x for x in network.load().stations if x.id == req.facility), None)
+    if st is None:
+        return rng.randint(*profile.eta_s)
+    drive = haversine_m(st.location, req.location) * ROAD_FACTOR / AVG_SPEED_MS
+    return max(60, round(drive + rng.uniform(30, 120)))      # plus the time to get a crew moving
 
 
 def _pick(rng: random.Random, p: Profile) -> str:

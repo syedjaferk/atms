@@ -29,6 +29,7 @@ def main(argv: list[str] | None = None) -> int:
     a = sub.add_parser("agencies", help="run the fake agency dispatch server")
     a.add_argument("--port", type=int, default=9100)
     a.add_argument("--seed", type=int, default=None)
+    a.add_argument("--reliable", action="store_true", help="never decline or time out, for demos")
 
     g = sub.add_parser("sms", help="run the fake SMS gateway")
     g.add_argument("--port", type=int, default=9200)
@@ -80,7 +81,11 @@ def main(argv: list[str] | None = None) -> int:
 
         from .agencies import create_app
 
-        uvicorn.run(create_app(args.seed), host="0.0.0.0", port=args.port)
+        from atms_contracts.models import Agency
+        from .agencies import DEFAULT_PROFILES, Profile
+
+        profiles = {a: Profile(0.0, 0.0, p.ack_delay_s, p.eta_s, p.timeout_sleep_s) for a, p in DEFAULT_PROFILES.items()} if args.reliable else None
+        uvicorn.run(create_app(args.seed, profiles), host="0.0.0.0", port=args.port)
         return 0
     if args.cmd == "sms":
         import uvicorn

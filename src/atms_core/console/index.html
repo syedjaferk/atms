@@ -12,6 +12,7 @@
     <h1>ATMS operator console</h1>
     <nav class="nav" aria-label="Pages">
       <a href="index.html" aria-current="page">Map</a>
+      <a href="cctv.html">CCTV</a>
       <a href="controller.html">Controller</a>
     </nav>
     <div class="when" role="group" aria-label="Show the road at">
@@ -30,6 +31,7 @@
   <main class="layout">
     <section class="mapwrap" aria-label="Road map">
       <svg id="map" role="img" aria-label="Map of the highway, facilities and incidents"></svg>
+      <div id="areas" class="areas" role="group" aria-label="Area"></div>
       <aside id="feed" class="feed" aria-label="Alerts sent" aria-live="polite" hidden>
         <h2>Alerts sent to officials</h2>
         <ul id="feed-list"></ul>

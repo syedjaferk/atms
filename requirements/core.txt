@@ -1,0 +1,15 @@
+# Core platform, agency and SMS simulators, edge simulator. Known good versions on Python 3.12.
+pydantic==2.14.2
+paho-mqtt==2.1.0
+pika==1.4.4                    # the bridge reads RabbitMQ over AMQP
+fastapi==0.162.0
+uvicorn==0.54.0
+websockets==17.4
+httpx==0.28.1
+confluent-kafka==2.16.1        # only used when ATMS_KAFKA_BOOTSTRAP is set
+psycopg[binary]==3.3.6         # only used when ATMS_DATABASE_URL is set
+# congestion forecast and what-if twin
+numpy==2.5.4
+pandas==3.1.0
+scipy==1.18.1
+lightgbm==4.7.0

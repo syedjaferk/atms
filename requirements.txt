@@ -1,0 +1,12 @@
+# Everything, for running the whole project on one machine without Docker.
+#
+#   python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
+#
+# torch is installed from the CPU wheel index so you do not download several gigabytes of CUDA libraries.
+# ffmpeg and ffprobe must be on the PATH (apt install ffmpeg, brew install ffmpeg).
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.15.0
+torchvision==0.29.2
+-r requirements/core.txt
+-r requirements/detector.txt
+-r requirements/dev.txt

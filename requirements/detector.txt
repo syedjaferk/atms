@@ -1,0 +1,11 @@
+# Detector node: the Hugging Face accident models and the code that publishes what they find.
+# torch and torchvision come from the CPU wheel index, see requirements.txt or docker/detector.Dockerfile.
+pydantic==2.14.2
+paho-mqtt==2.1.0
+fastapi==0.162.0
+uvicorn==0.54.0
+httpx==0.28.1
+transformers==5.22.1
+timm==1.0.30
+pillow==13.0.0
+opencv-python-headless==5.0.0.93

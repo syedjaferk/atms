@@ -65,7 +65,7 @@ def verify_signature(path: str, expires: int, sig: str, secret: str, now: float 
 
 
 def create_api(system: System, tokens: dict[str, Principal], signing_secret: str, run_bus: bool = True,
-               media_dir: str | Path = "simulator-out") -> FastAPI:
+               media_dir: str | Path = "simulator-out", catalog=None, detector_url: str | None = None) -> FastAPI:
     gateway = RealtimeGateway(system.store)
     system.bus.subscribe("realtime", None, gateway.on_event, broadcast=True)
     svc, store = system.service, system.store
@@ -106,6 +106,16 @@ def create_api(system: System, tokens: dict[str, Principal], signing_secret: str
 
         mount_forecast(app, system.forecast, principal, operator, sensor,
                        incident_for=lambda iid: incident_inputs(system.store, iid))
+
+    if catalog is not None:
+        from . import cctv
+
+        cctv.mount(app, operator, catalog, detector_url, lambda path, exp: sign(path, exp, signing_secret),
+                   lambda path, exp, sig: verify_signature(path, exp, sig, signing_secret))
+
+    @app.get("/healthz", include_in_schema=False)
+    async def healthz():
+        return {"ok": True}
 
     @app.exception_handler(Conflict)
     async def _conflict(_r, exc: Conflict):

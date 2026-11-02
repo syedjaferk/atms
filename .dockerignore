@@ -1,0 +1,9 @@
+.venv
+.git
+videos
+simulator-out
+**/__pycache__
+**/*.pyc
+src/atms.egg-info
+dataset/clips
+.pytest_cache

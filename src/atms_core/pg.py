@@ -58,10 +58,10 @@ def seed_facilities(url: str, schema: str | None = None, facilities: list[Facili
 
 
 def seed_contacts(url: str, schema: str | None = None, contacts: list[Contact] | None = None) -> None:
-    from .notifications import SEED_CONTACTS
+    from .notifications import network_contacts
 
     with psycopg.connect(url, options=_options(schema)) as c:
-        for k in contacts or SEED_CONTACTS:
+        for k in contacts or network_contacts():
             c.execute(
                 "insert into contact(id,name,channel,address,role,agency,road_segment,events,min_severity,secret) "
                 "values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) on conflict (id) do update set name=excluded.name, "

@@ -57,15 +57,17 @@ def _frame_key(path: Path) -> tuple[str, int]:
     return (m.group("clip") or "clip", int(m.group("n"))) if m else (path.stem, 0)
 
 
-def discover(root: str | Path) -> list[Clip]:
-    """Videos and frame folders under root. Frames named test28_18.jpg and acc1 (4).jpg group by clip."""
+def discover(root: str | Path, only: str | None = None) -> list[Clip]:
+    """Videos and frame folders under root. Frames named test28_18.jpg and acc1 (4).jpg group by clip. only is "videos" or "frames"."""
     root = Path(root)
     clips: list[Clip] = []
     if root.is_file() and root.suffix.lower() in VIDEO_SUFFIXES:
         return [Clip(root.stem, video=root, expected=_expected(root))]
     for p in sorted(root.rglob("*")):
-        if p.suffix.lower() in VIDEO_SUFFIXES:
+        if p.suffix.lower() in VIDEO_SUFFIXES and only != "frames":
             clips.append(Clip(p.stem, video=p, expected=_expected(p)))
+    if only == "videos":
+        return sorted(clips, key=lambda c: (c.video.stat().st_size, c.name))        # small first, so a long run can be cut short
     groups: dict[tuple[Path, str], list[tuple[int, Path]]] = {}
     for p in sorted(root.rglob("*")):
         if p.suffix.lower() in FRAME_SUFFIXES:
@@ -91,7 +93,7 @@ def load_frames(clip: Clip, count: int = 5) -> list:
 
 def check(detector, clip: Clip, count: int = 5) -> Verdict:
     frames = load_frames(clip, count)
-    detection, scores = detector.scan(frames, min(detector.min_confirmed_frames, len(frames)) or 1)
+    detection, scores, _ = detector.scan(frames, min(detector.min_confirmed_frames, len(frames)) or 1)
     return Verdict(clip, detection, scores)
 
 
@@ -126,3 +128,13 @@ def summary(verdicts: list[Verdict]) -> dict:
             "accuracy": round((tp + tn) / len(lab), 3) if lab else None,
             "precision": round(tp / (tp + fp), 3) if tp + fp else None,
             "recall": round(tp / (tp + fn), 3) if tp + fn else None}
+
+
+def cut_clip(source: str | Path, start_s: float, seconds: float, out: str | Path) -> Path:
+    """A short playable clip around a moment, which is the evidence an operator looks at. Small enough to stream quickly."""
+    out = Path(out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-ss", f"{max(0.0, start_s):.2f}", "-t", f"{seconds:.2f}",
+                    "-i", str(source), "-vf", "scale=640:-2,format=yuv420p", "-an", "-c:v", "libx264", "-profile:v", "baseline",
+                    "-preset", "veryfast", "-movflags", "+faststart", str(out)], check=True)
+    return out

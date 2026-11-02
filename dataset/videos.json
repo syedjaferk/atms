@@ -1,0 +1,2033 @@
+{
+ "version": 1,
+ "videos": [
+  {
+   "id": "acc-05",
+   "title": "Collision, 20 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-05.mp4",
+   "duration_s": 20.9,
+   "size_bytes": 928294,
+   "camera_id": "BLR001"
+  },
+  {
+   "id": "acc-15",
+   "title": "Collision, 11 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-15.mp4",
+   "duration_s": 11.9,
+   "size_bytes": 618538,
+   "camera_id": "BLR001"
+  },
+  {
+   "id": "acc-19",
+   "title": "Collision, 9 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-19.mp4",
+   "duration_s": 9.9,
+   "size_bytes": 351617,
+   "camera_id": "BLR001"
+  },
+  {
+   "id": "v16",
+   "title": "Recording v16",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v16.mp4",
+   "duration_s": 96.9,
+   "size_bytes": 15821707,
+   "model": {
+    "accident": true,
+    "confidence": 0.6686,
+    "severity": "major",
+    "vehicles": 3
+   },
+   "camera_id": "BLR001"
+  },
+  {
+   "id": "v62",
+   "title": "Recording v62",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v62.mp4",
+   "duration_s": 73.8,
+   "size_bytes": 11568605,
+   "model": {
+    "accident": true,
+    "confidence": 0.7661,
+    "severity": "major",
+    "vehicles": 3
+   },
+   "camera_id": "BLR001"
+  },
+  {
+   "id": "ok-05",
+   "title": "Free flowing traffic, 20 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-05.mp4",
+   "duration_s": 20.9,
+   "size_bytes": 645421,
+   "camera_id": "BLR001"
+  },
+  {
+   "id": "ok-22",
+   "title": "Free flowing traffic, 8 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-22.mp4",
+   "duration_s": 8.9,
+   "size_bytes": 528999,
+   "camera_id": "BLR001"
+  },
+  {
+   "id": "acc-04",
+   "title": "Collision, 21 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-04.mp4",
+   "duration_s": 21.9,
+   "size_bytes": 1101162,
+   "camera_id": "BLR002"
+  },
+  {
+   "id": "acc-11",
+   "title": "Collision, 13 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-11.mp4",
+   "duration_s": 13.9,
+   "size_bytes": 846906,
+   "camera_id": "BLR002"
+  },
+  {
+   "id": "v4",
+   "title": "Recording v4",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v4.mp4",
+   "duration_s": 12.0,
+   "size_bytes": 966156,
+   "model": {
+    "accident": true,
+    "confidence": 0.9281,
+    "severity": "major",
+    "vehicles": 4
+   },
+   "camera_id": "BLR002"
+  },
+  {
+   "id": "v47",
+   "title": "Recording v47",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v47.mp4",
+   "duration_s": 298.9,
+   "size_bytes": 13509894,
+   "model": {
+    "accident": true,
+    "confidence": 0.8436,
+    "severity": "critical",
+    "vehicles": 2
+   },
+   "camera_id": "BLR002"
+  },
+  {
+   "id": "v64",
+   "title": "Recording v64",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v64.mp4",
+   "duration_s": 578.2,
+   "size_bytes": 35732168,
+   "model": {
+    "accident": true,
+    "confidence": 0.7052,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "BLR002"
+  },
+  {
+   "id": "ok-07",
+   "title": "Free flowing traffic, 19 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-07.mp4",
+   "duration_s": 19.9,
+   "size_bytes": 607094,
+   "camera_id": "BLR002"
+  },
+  {
+   "id": "ok-23",
+   "title": "Free flowing traffic, 8 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-23.mp4",
+   "duration_s": 8.9,
+   "size_bytes": 447361,
+   "camera_id": "BLR002"
+  },
+  {
+   "id": "v14",
+   "title": "Recording v14",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v14.mp4",
+   "duration_s": 170.1,
+   "size_bytes": 7870550,
+   "model": {
+    "accident": true,
+    "confidence": 0.7538,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "BLR003"
+  },
+  {
+   "id": "v37",
+   "title": "Recording v37",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v37.mp4",
+   "duration_s": 497.9,
+   "size_bytes": 100748173,
+   "model": {
+    "accident": true,
+    "confidence": 0.7211,
+    "severity": "critical",
+    "vehicles": 7
+   },
+   "camera_id": "BLR003"
+  },
+  {
+   "id": "v45",
+   "title": "Recording v45",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v45.mp4",
+   "duration_s": 217.3,
+   "size_bytes": 54758403,
+   "model": {
+    "accident": true,
+    "confidence": 0.816,
+    "severity": "major",
+    "vehicles": 3
+   },
+   "camera_id": "BLR003"
+  },
+  {
+   "id": "v61",
+   "title": "Recording v61",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v61.mp4",
+   "duration_s": 24.7,
+   "size_bytes": 1184868,
+   "model": {
+    "accident": true,
+    "confidence": 0.8421,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "BLR003"
+  },
+  {
+   "id": "v9",
+   "title": "Recording v9",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v9.mp4",
+   "duration_s": 27.7,
+   "size_bytes": 1336297,
+   "model": {
+    "accident": true,
+    "confidence": 0.8536,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "BLR003"
+  },
+  {
+   "id": "ok-16",
+   "title": "Free flowing traffic, 13 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-16.mp4",
+   "duration_s": 13.9,
+   "size_bytes": 437970,
+   "camera_id": "BLR003"
+  },
+  {
+   "id": "ok-17",
+   "title": "Free flowing traffic, 13 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-17.mp4",
+   "duration_s": 13.9,
+   "size_bytes": 470303,
+   "camera_id": "BLR003"
+  },
+  {
+   "id": "acc-08",
+   "title": "Collision, 14 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-08.mp4",
+   "duration_s": 14.9,
+   "size_bytes": 414944,
+   "camera_id": "BLR004"
+  },
+  {
+   "id": "acc-17",
+   "title": "Collision, 10 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-17.mp4",
+   "duration_s": 10.9,
+   "size_bytes": 425092,
+   "camera_id": "BLR004"
+  },
+  {
+   "id": "acc-18",
+   "title": "Collision, 9 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-18.mp4",
+   "duration_s": 9.9,
+   "size_bytes": 457450,
+   "camera_id": "BLR004"
+  },
+  {
+   "id": "v29",
+   "title": "Recording v29",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v29.mp4",
+   "duration_s": 38.2,
+   "size_bytes": 2754723,
+   "model": {
+    "accident": true,
+    "confidence": 0.7755,
+    "severity": "major",
+    "vehicles": 3
+   },
+   "camera_id": "BLR004"
+  },
+  {
+   "id": "v68",
+   "title": "Recording v68",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v68.mp4",
+   "duration_s": 90.1,
+   "size_bytes": 4781685,
+   "model": {
+    "accident": true,
+    "confidence": 0.6869,
+    "severity": "critical",
+    "vehicles": 6
+   },
+   "camera_id": "BLR004"
+  },
+  {
+   "id": "ok-09",
+   "title": "Free flowing traffic, 18 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-09.mp4",
+   "duration_s": 18.9,
+   "size_bytes": 1529842,
+   "camera_id": "BLR004"
+  },
+  {
+   "id": "v24",
+   "title": "Recording v24",
+   "scenario": "good",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v24.mp4",
+   "duration_s": 10.0,
+   "size_bytes": 445327,
+   "model": {
+    "accident": false
+   },
+   "camera_id": "BLR004"
+  },
+  {
+   "id": "acc-06",
+   "title": "Collision, 18 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-06.mp4",
+   "duration_s": 18.9,
+   "size_bytes": 989003,
+   "camera_id": "BLR005"
+  },
+  {
+   "id": "v19",
+   "title": "Recording v19",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v19.mp4",
+   "duration_s": 281.9,
+   "size_bytes": 48741382,
+   "model": {
+    "accident": true,
+    "confidence": 0.6235,
+    "severity": "critical",
+    "vehicles": 1
+   },
+   "camera_id": "BLR005"
+  },
+  {
+   "id": "v22",
+   "title": "Recording v22",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v22.mp4",
+   "duration_s": 1082.6,
+   "size_bytes": 48066989,
+   "model": {
+    "accident": true,
+    "confidence": 0.5779,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "BLR005"
+  },
+  {
+   "id": "v55",
+   "title": "Recording v55",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v55.mp4",
+   "duration_s": 21.9,
+   "size_bytes": 980852,
+   "model": {
+    "accident": true,
+    "confidence": 0.5632,
+    "severity": "major",
+    "vehicles": 2
+   },
+   "camera_id": "BLR005"
+  },
+  {
+   "id": "v76",
+   "title": "Recording v76",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v76.mp4",
+   "duration_s": 422.4,
+   "size_bytes": 22226379,
+   "model": {
+    "accident": true,
+    "confidence": 0.8313,
+    "severity": "critical",
+    "vehicles": 1
+   },
+   "camera_id": "BLR005"
+  },
+  {
+   "id": "ok-14",
+   "title": "Free flowing traffic, 14 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-14.mp4",
+   "duration_s": 14.9,
+   "size_bytes": 607138,
+   "camera_id": "BLR005"
+  },
+  {
+   "id": "v42",
+   "title": "Recording v42",
+   "scenario": "good",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v42.mp4",
+   "duration_s": 20.2,
+   "size_bytes": 963589,
+   "model": {
+    "accident": false
+   },
+   "camera_id": "BLR005"
+  },
+  {
+   "id": "v23",
+   "title": "Recording v23",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v23.mp4",
+   "duration_s": 543.6,
+   "size_bytes": 72441608,
+   "model": {
+    "accident": true,
+    "confidence": 0.8608,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "CHN001"
+  },
+  {
+   "id": "v38",
+   "title": "Recording v38",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v38.mp4",
+   "duration_s": 621.4,
+   "size_bytes": 98433875,
+   "model": {
+    "accident": true,
+    "confidence": 0.7856,
+    "severity": "major",
+    "vehicles": 3
+   },
+   "camera_id": "CHN001"
+  },
+  {
+   "id": "v44",
+   "title": "Recording v44",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v44.mp4",
+   "duration_s": 107.2,
+   "size_bytes": 26603784,
+   "model": {
+    "accident": true,
+    "confidence": 0.8412,
+    "severity": "major",
+    "vehicles": 4
+   },
+   "camera_id": "CHN001"
+  },
+  {
+   "id": "v72",
+   "title": "Recording v72",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v72.mp4",
+   "duration_s": 144.5,
+   "size_bytes": 22684443,
+   "model": {
+    "accident": true,
+    "confidence": 0.7048,
+    "severity": "major",
+    "vehicles": 2
+   },
+   "camera_id": "CHN001"
+  },
+  {
+   "id": "v73",
+   "title": "Recording v73",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v73.mp4",
+   "duration_s": 44.9,
+   "size_bytes": 2359950,
+   "model": {
+    "accident": true,
+    "confidence": 0.8089,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "CHN001"
+  },
+  {
+   "id": "ok-12",
+   "title": "Free flowing traffic, 16 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-12.mp4",
+   "duration_s": 16.9,
+   "size_bytes": 679817,
+   "camera_id": "CHN001"
+  },
+  {
+   "id": "v35",
+   "title": "Recording v35",
+   "scenario": "good",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v35.mp4",
+   "duration_s": 653.9,
+   "size_bytes": 30257033,
+   "model": {
+    "accident": false
+   },
+   "camera_id": "CHN001"
+  },
+  {
+   "id": "acc-03",
+   "title": "Collision, 21 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-03.mp4",
+   "duration_s": 21.9,
+   "size_bytes": 534575,
+   "camera_id": "CHN002"
+  },
+  {
+   "id": "acc-13",
+   "title": "Collision, 11 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-13.mp4",
+   "duration_s": 11.9,
+   "size_bytes": 585947,
+   "camera_id": "CHN002"
+  },
+  {
+   "id": "v57",
+   "title": "Recording v57",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v57.mp4",
+   "duration_s": 609.0,
+   "size_bytes": 90054888,
+   "model": {
+    "accident": true,
+    "confidence": 0.7855,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "CHN002"
+  },
+  {
+   "id": "v70",
+   "title": "Recording v70",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v70.mp4",
+   "duration_s": 732.2,
+   "size_bytes": 122920336,
+   "model": {
+    "accident": true,
+    "confidence": 0.7415,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "CHN002"
+  },
+  {
+   "id": "v77",
+   "title": "Recording v77",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v77.mp4",
+   "duration_s": 597.8,
+   "size_bytes": 86942915,
+   "model": {
+    "accident": true,
+    "confidence": 0.7271,
+    "severity": "critical",
+    "vehicles": 9
+   },
+   "camera_id": "CHN002"
+  },
+  {
+   "id": "ok-03",
+   "title": "Free flowing traffic, 26 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-03.mp4",
+   "duration_s": 26.9,
+   "size_bytes": 1250537,
+   "camera_id": "CHN002"
+  },
+  {
+   "id": "ok-04",
+   "title": "Free flowing traffic, 23 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-04.mp4",
+   "duration_s": 23.9,
+   "size_bytes": 1184124,
+   "camera_id": "CHN002"
+  },
+  {
+   "id": "acc-02",
+   "title": "Collision, 21 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-02.mp4",
+   "duration_s": 21.9,
+   "size_bytes": 892002,
+   "camera_id": "CHN003"
+  },
+  {
+   "id": "acc-24",
+   "title": "Collision, 7 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-24.mp4",
+   "duration_s": 7.9,
+   "size_bytes": 402907,
+   "camera_id": "CHN003"
+  },
+  {
+   "id": "v41",
+   "title": "Recording v41",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v41.mp4",
+   "duration_s": 145.8,
+   "size_bytes": 22454127,
+   "model": {
+    "accident": true,
+    "confidence": 0.8302,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "CHN003"
+  },
+  {
+   "id": "v49",
+   "title": "Recording v49",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v49.mp4",
+   "duration_s": 51.8,
+   "size_bytes": 2190403,
+   "model": {
+    "accident": true,
+    "confidence": 0.7824,
+    "severity": "critical",
+    "vehicles": 1
+   },
+   "camera_id": "CHN003"
+  },
+  {
+   "id": "v80",
+   "title": "Recording v80",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v80.mp4",
+   "duration_s": 39.8,
+   "size_bytes": 1783484,
+   "model": {
+    "accident": true,
+    "confidence": 0.7502,
+    "severity": "critical",
+    "vehicles": 6
+   },
+   "camera_id": "CHN003"
+  },
+  {
+   "id": "ok-15",
+   "title": "Free flowing traffic, 13 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-15.mp4",
+   "duration_s": 13.9,
+   "size_bytes": 554878,
+   "camera_id": "CHN003"
+  },
+  {
+   "id": "ok-20",
+   "title": "Free flowing traffic, 12 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-20.mp4",
+   "duration_s": 12.9,
+   "size_bytes": 1061843,
+   "camera_id": "CHN003"
+  },
+  {
+   "id": "acc-01",
+   "title": "Collision, 43 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-01.mp4",
+   "duration_s": 43.9,
+   "size_bytes": 1120625,
+   "camera_id": "CHN004"
+  },
+  {
+   "id": "acc-10",
+   "title": "Collision, 13 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-10.mp4",
+   "duration_s": 13.9,
+   "size_bytes": 685019,
+   "camera_id": "CHN004"
+  },
+  {
+   "id": "v1",
+   "title": "Recording v1",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v1.mp4",
+   "duration_s": 12.5,
+   "size_bytes": 587572,
+   "model": {
+    "accident": true,
+    "confidence": 0.7731,
+    "severity": "critical",
+    "vehicles": 7
+   },
+   "camera_id": "CHN004"
+  },
+  {
+   "id": "v56",
+   "title": "Recording v56",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v56.mp4",
+   "duration_s": 525.7,
+   "size_bytes": 26130792,
+   "model": {
+    "accident": true,
+    "confidence": 0.6877,
+    "severity": "critical",
+    "vehicles": 1
+   },
+   "camera_id": "CHN004"
+  },
+  {
+   "id": "v74",
+   "title": "Recording v74",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v74.mp4",
+   "duration_s": 271.5,
+   "size_bytes": 11784866,
+   "model": {
+    "accident": true,
+    "confidence": 0.8104,
+    "severity": "major",
+    "vehicles": 4
+   },
+   "camera_id": "CHN004"
+  },
+  {
+   "id": "ok-21",
+   "title": "Free flowing traffic, 9 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-21.mp4",
+   "duration_s": 9.9,
+   "size_bytes": 574710,
+   "camera_id": "CHN004"
+  },
+  {
+   "id": "v31",
+   "title": "Recording v31",
+   "scenario": "good",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v31.mp4",
+   "duration_s": 25.7,
+   "size_bytes": 3696879,
+   "model": {
+    "accident": false
+   },
+   "camera_id": "CHN004"
+  },
+  {
+   "id": "acc-07",
+   "title": "Collision, 15 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-07.mp4",
+   "duration_s": 15.9,
+   "size_bytes": 556491,
+   "camera_id": "CHN005"
+  },
+  {
+   "id": "acc-23",
+   "title": "Collision, 7 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-23.mp4",
+   "duration_s": 7.9,
+   "size_bytes": 406638,
+   "camera_id": "CHN005"
+  },
+  {
+   "id": "v17",
+   "title": "Recording v17",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v17.mp4",
+   "duration_s": 618.9,
+   "size_bytes": 69503232,
+   "model": {
+    "accident": true,
+    "confidence": 0.7677,
+    "severity": "critical",
+    "vehicles": 4
+   },
+   "camera_id": "CHN005"
+  },
+  {
+   "id": "v26",
+   "title": "Recording v26",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v26.mp4",
+   "duration_s": 145.3,
+   "size_bytes": 8817820,
+   "model": {
+    "accident": true,
+    "confidence": 0.5516,
+    "severity": "critical",
+    "vehicles": 6
+   },
+   "camera_id": "CHN005"
+  },
+  {
+   "id": "v5",
+   "title": "Recording v5",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v5.mp4",
+   "duration_s": 45.2,
+   "size_bytes": 2657333,
+   "model": {
+    "accident": true,
+    "confidence": 0.9603,
+    "severity": "critical",
+    "vehicles": 3
+   },
+   "camera_id": "CHN005"
+  },
+  {
+   "id": "ok-19",
+   "title": "Free flowing traffic, 13 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-19.mp4",
+   "duration_s": 13.9,
+   "size_bytes": 603924,
+   "camera_id": "CHN005"
+  },
+  {
+   "id": "ok-24",
+   "title": "Free flowing traffic, 7 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-24.mp4",
+   "duration_s": 7.9,
+   "size_bytes": 391716,
+   "camera_id": "CHN005"
+  },
+  {
+   "id": "acc-16",
+   "title": "Collision, 10 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-16.mp4",
+   "duration_s": 10.9,
+   "size_bytes": 416458,
+   "camera_id": "GGN001"
+  },
+  {
+   "id": "v40",
+   "title": "Recording v40",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v40.mp4",
+   "duration_s": 58.9,
+   "size_bytes": 3022262,
+   "model": {
+    "accident": true,
+    "confidence": 0.7785,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GGN001"
+  },
+  {
+   "id": "v65",
+   "title": "Recording v65",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v65.mp4",
+   "duration_s": 12.1,
+   "size_bytes": 725450,
+   "model": {
+    "accident": true,
+    "confidence": 0.8337,
+    "severity": "critical",
+    "vehicles": 5
+   },
+   "camera_id": "GGN001"
+  },
+  {
+   "id": "v67",
+   "title": "Recording v67",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v67.mp4",
+   "duration_s": 172.7,
+   "size_bytes": 29060150,
+   "model": {
+    "accident": true,
+    "confidence": 0.7856,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GGN001"
+  },
+  {
+   "id": "v75",
+   "title": "Recording v75",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v75.mp4",
+   "duration_s": 87.6,
+   "size_bytes": 3372579,
+   "model": {
+    "accident": true,
+    "confidence": 0.6994,
+    "severity": "major",
+    "vehicles": 4
+   },
+   "camera_id": "GGN001"
+  },
+  {
+   "id": "ok-08",
+   "title": "Free flowing traffic, 19 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-08.mp4",
+   "duration_s": 19.9,
+   "size_bytes": 844928,
+   "camera_id": "GGN001"
+  },
+  {
+   "id": "v78",
+   "title": "Recording v78",
+   "scenario": "good",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v78.mp4",
+   "duration_s": 602.7,
+   "size_bytes": 147567804,
+   "model": {
+    "accident": false
+   },
+   "camera_id": "GGN001"
+  },
+  {
+   "id": "acc-22",
+   "title": "Collision, 7 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-22.mp4",
+   "duration_s": 7.9,
+   "size_bytes": 644850,
+   "camera_id": "GGN002"
+  },
+  {
+   "id": "v28",
+   "title": "Recording v28",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v28.mp4",
+   "duration_s": 68.2,
+   "size_bytes": 12027645,
+   "model": {
+    "accident": true,
+    "confidence": 0.7366,
+    "severity": "major",
+    "vehicles": 3
+   },
+   "camera_id": "GGN002"
+  },
+  {
+   "id": "v46",
+   "title": "Recording v46",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v46.mp4",
+   "duration_s": 302.6,
+   "size_bytes": 52026117,
+   "model": {
+    "accident": true,
+    "confidence": 0.7411,
+    "severity": "critical",
+    "vehicles": 7
+   },
+   "camera_id": "GGN002"
+  },
+  {
+   "id": "v53",
+   "title": "Recording v53",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v53.mp4",
+   "duration_s": 156.0,
+   "size_bytes": 20573310,
+   "model": {
+    "accident": true,
+    "confidence": 0.7071,
+    "severity": "critical",
+    "vehicles": 2
+   },
+   "camera_id": "GGN002"
+  },
+  {
+   "id": "v54",
+   "title": "Recording v54",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v54.mp4",
+   "duration_s": 757.6,
+   "size_bytes": 130233996,
+   "model": {
+    "accident": true,
+    "confidence": 0.8114,
+    "severity": "major",
+    "vehicles": 2
+   },
+   "camera_id": "GGN002"
+  },
+  {
+   "id": "ok-01",
+   "title": "Free flowing traffic, 40 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-01.mp4",
+   "duration_s": 40.9,
+   "size_bytes": 1721959,
+   "camera_id": "GGN002"
+  },
+  {
+   "id": "acc-20",
+   "title": "Collision, 8 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-20.mp4",
+   "duration_s": 8.9,
+   "size_bytes": 327864,
+   "camera_id": "GGN003"
+  },
+  {
+   "id": "v39",
+   "title": "Recording v39",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v39.mp4",
+   "duration_s": 179.9,
+   "size_bytes": 25736563,
+   "model": {
+    "accident": true,
+    "confidence": 0.6945,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GGN003"
+  },
+  {
+   "id": "v48",
+   "title": "Recording v48",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v48.mp4",
+   "duration_s": 56.5,
+   "size_bytes": 2521319,
+   "model": {
+    "accident": true,
+    "confidence": 0.633,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GGN003"
+  },
+  {
+   "id": "v50",
+   "title": "Recording v50",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v50.mp4",
+   "duration_s": 66.9,
+   "size_bytes": 9566214,
+   "model": {
+    "accident": true,
+    "confidence": 0.7311,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GGN003"
+  },
+  {
+   "id": "v71",
+   "title": "Recording v71",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v71.mp4",
+   "duration_s": 69.3,
+   "size_bytes": 2910569,
+   "model": {
+    "accident": true,
+    "confidence": 0.8902,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GGN003"
+  },
+  {
+   "id": "ok-06",
+   "title": "Free flowing traffic, 20 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-06.mp4",
+   "duration_s": 20.9,
+   "size_bytes": 677284,
+   "camera_id": "GGN003"
+  },
+  {
+   "id": "v18",
+   "title": "Recording v18",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v18.mp4",
+   "duration_s": 150.1,
+   "size_bytes": 5864278,
+   "model": {
+    "accident": true,
+    "confidence": 0.9575,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GGN004"
+  },
+  {
+   "id": "v27",
+   "title": "Recording v27",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v27.mp4",
+   "duration_s": 19.9,
+   "size_bytes": 848929,
+   "model": {
+    "accident": true,
+    "confidence": 0.791,
+    "severity": "major",
+    "vehicles": 3
+   },
+   "camera_id": "GGN004"
+  },
+  {
+   "id": "v33",
+   "title": "Recording v33",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v33.mp4",
+   "duration_s": 354.2,
+   "size_bytes": 20606423,
+   "model": {
+    "accident": true,
+    "confidence": 0.7347,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GGN004"
+  },
+  {
+   "id": "v59",
+   "title": "Recording v59",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v59.mp4",
+   "duration_s": 299.7,
+   "size_bytes": 24619963,
+   "model": {
+    "accident": true,
+    "confidence": 0.7546,
+    "severity": "critical",
+    "vehicles": 1
+   },
+   "camera_id": "GGN004"
+  },
+  {
+   "id": "v60",
+   "title": "Recording v60",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v60.mp4",
+   "duration_s": 51.1,
+   "size_bytes": 6354212,
+   "model": {
+    "accident": true,
+    "confidence": 0.7106,
+    "severity": "critical",
+    "vehicles": 1
+   },
+   "camera_id": "GGN004"
+  },
+  {
+   "id": "ok-11",
+   "title": "Free flowing traffic, 16 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-11.mp4",
+   "duration_s": 16.9,
+   "size_bytes": 527310,
+   "camera_id": "GGN004"
+  },
+  {
+   "id": "v20",
+   "title": "Recording v20",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v20.mp4",
+   "duration_s": 337.9,
+   "size_bytes": 56390731,
+   "model": {
+    "accident": true,
+    "confidence": 0.8099,
+    "severity": "major",
+    "vehicles": 4
+   },
+   "camera_id": "GNT001"
+  },
+  {
+   "id": "v21",
+   "title": "Recording v21",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v21.mp4",
+   "duration_s": 390.1,
+   "size_bytes": 17453733,
+   "model": {
+    "accident": true,
+    "confidence": 0.9287,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT001"
+  },
+  {
+   "id": "v3",
+   "title": "Recording v3",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v3.mp4",
+   "duration_s": 36.0,
+   "size_bytes": 2602134,
+   "model": {
+    "accident": true,
+    "confidence": 0.7692,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT001"
+  },
+  {
+   "id": "v51",
+   "title": "Recording v51",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v51.mp4",
+   "duration_s": 126.4,
+   "size_bytes": 24961944,
+   "model": {
+    "accident": true,
+    "confidence": 0.5797,
+    "severity": "major",
+    "vehicles": 3
+   },
+   "camera_id": "GNT001"
+  },
+  {
+   "id": "ok-18",
+   "title": "Free flowing traffic, 13 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-18.mp4",
+   "duration_s": 13.9,
+   "size_bytes": 719678,
+   "camera_id": "GNT001"
+  },
+  {
+   "id": "v30",
+   "title": "Recording v30",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v30.mp4",
+   "duration_s": 147.8,
+   "size_bytes": 4817640,
+   "model": {
+    "accident": true,
+    "confidence": 0.8166,
+    "severity": "major",
+    "vehicles": 2
+   },
+   "camera_id": "GNT002"
+  },
+  {
+   "id": "v6",
+   "title": "Recording v6",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v6.mp4",
+   "duration_s": 22.2,
+   "size_bytes": 1742012,
+   "model": {
+    "accident": true,
+    "confidence": 0.7491,
+    "severity": "critical",
+    "vehicles": 5
+   },
+   "camera_id": "GNT002"
+  },
+  {
+   "id": "v79",
+   "title": "Recording v79",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v79.mp4",
+   "duration_s": 330.8,
+   "size_bytes": 45397554,
+   "model": {
+    "accident": true,
+    "confidence": 0.6932,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT002"
+  },
+  {
+   "id": "v82",
+   "title": "Recording v82",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v82.mp4",
+   "duration_s": 242.0,
+   "size_bytes": 50560085,
+   "model": {
+    "accident": true,
+    "confidence": 0.6953,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT002"
+  },
+  {
+   "id": "ok-13",
+   "title": "Free flowing traffic, 14 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-13.mp4",
+   "duration_s": 14.9,
+   "size_bytes": 370940,
+   "camera_id": "GNT002"
+  },
+  {
+   "id": "acc-21",
+   "title": "Collision, 8 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-21.mp4",
+   "duration_s": 8.9,
+   "size_bytes": 423182,
+   "camera_id": "GNT003"
+  },
+  {
+   "id": "v12",
+   "title": "Recording v12",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v12.mp4",
+   "duration_s": 65.2,
+   "size_bytes": 2687634,
+   "model": {
+    "accident": true,
+    "confidence": 0.8838,
+    "severity": "major",
+    "vehicles": 3
+   },
+   "camera_id": "GNT003"
+  },
+  {
+   "id": "v25",
+   "title": "Recording v25",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v25.mp4",
+   "duration_s": 187.9,
+   "size_bytes": 8545886,
+   "model": {
+    "accident": true,
+    "confidence": 0.797,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT003"
+  },
+  {
+   "id": "v7",
+   "title": "Recording v7",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v7.mp4",
+   "duration_s": 22.2,
+   "size_bytes": 1659542,
+   "model": {
+    "accident": true,
+    "confidence": 0.7078,
+    "severity": "major",
+    "vehicles": 2
+   },
+   "camera_id": "GNT003"
+  },
+  {
+   "id": "v66",
+   "title": "Recording v66",
+   "scenario": "good",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v66.mp4",
+   "duration_s": 11.0,
+   "size_bytes": 2938568,
+   "model": {
+    "accident": false
+   },
+   "camera_id": "GNT003"
+  },
+  {
+   "id": "acc-09",
+   "title": "Collision, 14 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-09.mp4",
+   "duration_s": 14.9,
+   "size_bytes": 692809,
+   "camera_id": "GNT004"
+  },
+  {
+   "id": "v36",
+   "title": "Recording v36",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v36.mp4",
+   "duration_s": 568.0,
+   "size_bytes": 95029194,
+   "model": {
+    "accident": true,
+    "confidence": 0.8856,
+    "severity": "major",
+    "vehicles": 3
+   },
+   "camera_id": "GNT004"
+  },
+  {
+   "id": "v69",
+   "title": "Recording v69",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v69.mp4",
+   "duration_s": 300.1,
+   "size_bytes": 17762486,
+   "model": {
+    "accident": true,
+    "confidence": 0.7623,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT004"
+  },
+  {
+   "id": "v81",
+   "title": "Recording v81",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v81.mp4",
+   "duration_s": 40.1,
+   "size_bytes": 7026712,
+   "model": {
+    "accident": true,
+    "confidence": 0.8513,
+    "severity": "major",
+    "vehicles": 4
+   },
+   "camera_id": "GNT004"
+  },
+  {
+   "id": "v58",
+   "title": "Recording v58",
+   "scenario": "good",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v58.mp4",
+   "duration_s": 226.9,
+   "size_bytes": 11358451,
+   "model": {
+    "accident": false
+   },
+   "camera_id": "GNT004"
+  },
+  {
+   "id": "v13",
+   "title": "Recording v13",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v13.mp4",
+   "duration_s": 19.3,
+   "size_bytes": 724233,
+   "model": {
+    "accident": true,
+    "confidence": 0.7922,
+    "severity": "major",
+    "vehicles": 2
+   },
+   "camera_id": "GNT005"
+  },
+  {
+   "id": "v15",
+   "title": "Recording v15",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v15.mp4",
+   "duration_s": 247.1,
+   "size_bytes": 61824243,
+   "model": {
+    "accident": true,
+    "confidence": 0.7174,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT005"
+  },
+  {
+   "id": "v32",
+   "title": "Recording v32",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v32.mp4",
+   "duration_s": 182.6,
+   "size_bytes": 25916260,
+   "model": {
+    "accident": true,
+    "confidence": 0.7554,
+    "severity": "critical",
+    "vehicles": 6
+   },
+   "camera_id": "GNT005"
+  },
+  {
+   "id": "v43",
+   "title": "Recording v43",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v43.mp4",
+   "duration_s": 903.6,
+   "size_bytes": 40318512,
+   "model": {
+    "accident": true,
+    "confidence": 0.7667,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT005"
+  },
+  {
+   "id": "ok-10",
+   "title": "Free flowing traffic, 17 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-10.mp4",
+   "duration_s": 17.9,
+   "size_bytes": 358767,
+   "camera_id": "GNT005"
+  },
+  {
+   "id": "v10",
+   "title": "Recording v10",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v10.mp4",
+   "duration_s": 24.4,
+   "size_bytes": 884697,
+   "model": {
+    "accident": true,
+    "confidence": 0.7029,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT006"
+  },
+  {
+   "id": "v34",
+   "title": "Recording v34",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v34.mp4",
+   "duration_s": 381.8,
+   "size_bytes": 80720465,
+   "model": {
+    "accident": true,
+    "confidence": 0.8113,
+    "severity": "critical",
+    "vehicles": 7
+   },
+   "camera_id": "GNT006"
+  },
+  {
+   "id": "v52",
+   "title": "Recording v52",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v52.mp4",
+   "duration_s": 69.0,
+   "size_bytes": 3098264,
+   "model": {
+    "accident": true,
+    "confidence": 0.749,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT006"
+  },
+  {
+   "id": "v8",
+   "title": "Recording v8",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v8.mp4",
+   "duration_s": 22.1,
+   "size_bytes": 1153037,
+   "model": {
+    "accident": true,
+    "confidence": 0.7675,
+    "severity": "major",
+    "vehicles": 2
+   },
+   "camera_id": "GNT006"
+  },
+  {
+   "id": "ok-02",
+   "title": "Free flowing traffic, 31 frames",
+   "scenario": "good",
+   "truth": "normal",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/ok-02.mp4",
+   "duration_s": 31.9,
+   "size_bytes": 1503352,
+   "camera_id": "GNT006"
+  },
+  {
+   "id": "acc-12",
+   "title": "Collision, 13 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-12.mp4",
+   "duration_s": 13.9,
+   "size_bytes": 438340,
+   "camera_id": "GNT007"
+  },
+  {
+   "id": "acc-14",
+   "title": "Collision, 11 frames",
+   "scenario": "bad",
+   "truth": "accident",
+   "label_source": "ground truth",
+   "root": "dataset",
+   "file": "clips/acc-14.mp4",
+   "duration_s": 11.9,
+   "size_bytes": 296044,
+   "camera_id": "GNT007"
+  },
+  {
+   "id": "v11",
+   "title": "Recording v11",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v11.mp4",
+   "duration_s": 104.3,
+   "size_bytes": 6905883,
+   "model": {
+    "accident": true,
+    "confidence": 0.8133,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT007"
+  },
+  {
+   "id": "v2",
+   "title": "Recording v2",
+   "scenario": "bad",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v2.mp4",
+   "duration_s": 13.2,
+   "size_bytes": 590833,
+   "model": {
+    "accident": true,
+    "confidence": 0.9122,
+    "severity": "minor",
+    "vehicles": 1
+   },
+   "camera_id": "GNT007"
+  },
+  {
+   "id": "v63",
+   "title": "Recording v63",
+   "scenario": "good",
+   "truth": "unlabelled",
+   "label_source": "model",
+   "root": "videos",
+   "file": "v63.mp4",
+   "duration_s": 49.4,
+   "size_bytes": 2215865,
+   "model": {
+    "accident": false
+   },
+   "camera_id": "GNT007"
+  }
+ ]
+}

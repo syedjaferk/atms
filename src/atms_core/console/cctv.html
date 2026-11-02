@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ATMS CCTV</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="controller.css">
+  <link rel="stylesheet" href="cctv.css">
+</head>
+<body>
+  <header class="bar">
+    <h1>ATMS CCTV</h1>
+    <nav class="nav" aria-label="Pages">
+      <a href="index.html">Map</a>
+      <a href="cctv.html" aria-current="page">CCTV</a>
+      <a href="controller.html">Controller</a>
+    </nav>
+    <div class="status">
+      <span id="detector" class="muted"></span>
+      <span id="link" class="link down" title="Live connection"><i></i><b id="link-text">Offline</b></span>
+      <button id="signout" class="ghost" hidden>Sign out</button>
+    </div>
+  </header>
+
+  <main class="cctv">
+    <section class="mapwrap" aria-label="Cameras on the map">
+      <svg id="map" role="img" aria-label="Map of the cameras, stations and incidents"></svg>
+      <div id="areas" class="areas" role="group" aria-label="Area"></div>
+      <div class="hint-box">Pick a camera on the map. Cameras ringed in red have reported an accident.</div>
+      <div id="tip" class="tip" hidden></div>
+      <p class="scale">Map data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></p>
+    </section>
+
+    <aside class="side2" id="side" aria-label="Camera videos and what happens next"></aside>
+  </main>
+
+  <div id="gate" class="gate" hidden>
+    <form id="gate-form" class="card">
+      <h2>Sign in</h2>
+      <p class="muted">Enter an operator token. It stays in this tab only.</p>
+      <label for="token">Operator token</label>
+      <input id="token" type="password" autocomplete="off" required>
+      <p id="gate-error" class="error" role="alert" hidden></p>
+      <button type="submit">Open the console</button>
+    </form>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script type="module" src="cctv.js"></script>
+</body>
+</html>

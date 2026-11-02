@@ -21,7 +21,7 @@ function el(tag, attrs = {}, text) {
 export class RoadMap {
   constructor(svg, tip, handlers) {
     this.svg = svg; this.tip = tip; this.on = handlers;
-    this.data = null; this.horizon = 0; this.picked = null;
+    this.data = null; this.horizon = 0; this.picked = null; this.area = null;     // area id, or "all"
     this.view = { lat: 18.46, lon: 73.85, ppm: 0.05 };      // pixels per metre
     this.fitted = false;
     this.tilesOn = true;
@@ -40,7 +40,12 @@ export class RoadMap {
   set(data) {
     this.data = data;
     this.skew = Date.parse(data.generated_at) - Date.now();      // so unit positions follow the server clock
-    if (!this.fitted) { this.fit(); this.fitted = true; }
+    if (!this.fitted) {
+      const first = data.incidents[0];
+      this.area = (first && this.areaOf(first.lat, first.lon)) || (data.areas && data.areas[0] ? data.areas[0].id : "all");
+      this.onArea && this.onArea(this.area);
+      this.fit(); this.fitted = true;
+    }
     this.draw();
   }
 
@@ -60,7 +65,7 @@ export class RoadMap {
       const latOf = (y) => (Math.atan(Math.sinh(Math.PI * (1 - (2 * y) / n))) * 180) / Math.PI;
       const nw = this.unproject(0, 0), se = this.unproject(w, h);
       const x0 = Math.floor(tx(nw.lon)), x1 = Math.floor(tx(se.lon)), y0 = Math.floor(ty(nw.lat)), y1 = Math.floor(ty(se.lat));
-      if ((x1 - x0 + 1) * (y1 - y0 + 1) <= 60) {
+      if ((x1 - x0 + 1) * (y1 - y0 + 1) <= 150) {
         for (let x = x0; x <= x1; x++) for (let y = y0; y <= y1; y++) {
           if (x < 0 || y < 0 || x >= n || y >= n) continue;
           const key = `${z}/${x}/${y}`;
@@ -82,8 +87,16 @@ export class RoadMap {
     this.svg.classList.toggle("streets", this.tilesOn);
   }
 
+  select(cameraId) { this.selected = cameraId; this.draw(); }
+
   setHorizon(h) { this.horizon = h; this.draw(); }
-  setPicked(id) { this.picked = id; this.draw(); }
+  setPicked(id) {
+    this.picked = id;
+    const inc = id && this.data && this.data.incidents.find((i) => i.id === id);
+    const a = inc && this.areaOf(inc.lat, inc.lon);
+    if (a && a !== this.area) { this.area = a; this.fit(); this.onArea && this.onArea(a); }
+    this.draw();
+  }
 
   size() { const r = this.svg.getBoundingClientRect(); return { w: Math.max(r.width, 1), h: Math.max(r.height, 1) }; }
 
@@ -93,20 +106,38 @@ export class RoadMap {
     return [w / 2 + (lon - v.lon) * M_PER_DEG_LON * cos * v.ppm, h / 2 - (lat - v.lat) * M_PER_DEG_LAT * v.ppm];
   }
 
+  // Which area a point belongs to, the nearest one within about 40 km, or null.
+  areaOf(lat, lon) {
+    let best = null, dist = 0.4;                          // degrees, roughly 40 km
+    for (const a of this.data.areas || []) {
+      const d = Math.hypot(a.lat - lat, (a.lon - lon) * Math.cos((lat * Math.PI) / 180));
+      if (d < dist) { dist = d; best = a.id; }
+    }
+    return best;
+  }
+
+  setArea(id) { this.area = id; this.fit(); this.draw(); if (this.onArea) this.onArea(id); }
+
+  // Frame the chosen area, or every camera when no area is chosen.
   fit() {
     if (!this.data) return;
-    const pts = this.data.segments.flatMap((s) => [[s.from.lat, s.from.lon], [s.to.lat, s.to.lon]]);
-    for (const i of this.data.incidents) pts.push([i.lat, i.lon]);
-    for (const c of this.data.cameras || []) pts.push([c.lat, c.lon]);
-    const busy = new Set(this.data.incidents.flatMap((i) => i.assignments.filter((a) => !GONE_STATES.has(a.state)).map((a) => a.facility)));
-    for (const f of this.data.facilities) if (busy.has(f.id)) pts.push([f.lat, f.lon]);
+    const d = this.data, all = !this.area || this.area === "all";
+    const mine = (lat, lon) => all || this.areaOf(lat, lon) === this.area;
+    const pts = [];
+    for (const c of d.cameras || []) if (mine(c.lat, c.lon)) pts.push([c.lat, c.lon]);
+    for (const i of d.incidents) if (mine(i.lat, i.lon)) pts.push([i.lat, i.lon]);
+    if (!all) {
+      for (const f of d.facilities) if (mine(f.lat, f.lon)) pts.push([f.lat, f.lon]);
+      for (const s of d.segments) if (mine(s.from.lat, s.from.lon)) pts.push([s.from.lat, s.from.lon], [s.to.lat, s.to.lon]);
+    }
+    if (!pts.length) return;
     const lats = pts.map((p) => p[0]), lons = pts.map((p) => p[1]);
     const lat = (Math.min(...lats) + Math.max(...lats)) / 2, lon = (Math.min(...lons) + Math.max(...lons)) / 2;
     const cos = Math.cos((lat * Math.PI) / 180);
     const spanY = Math.max((Math.max(...lats) - Math.min(...lats)) * M_PER_DEG_LAT, 500);
     const spanX = Math.max((Math.max(...lons) - Math.min(...lons)) * M_PER_DEG_LON * cos, 500);
     const { w, h } = this.size();
-    this.view = { lat, lon, ppm: Math.min((w * 0.7) / spanX, (h * 0.78) / spanY) };
+    this.view = { lat, lon, ppm: Math.min((w * 0.7) / spanX, (h * 0.6) / spanY) };
     this.userMoved = false;
   }
 
@@ -260,6 +291,13 @@ export class RoadMap {
     const roads = el("g"), marks = el("g"), links = el("g"), facs = el("g"), pins = el("g");
     this.vec.append(roads, links, facs, marks, pins);
 
+    // roads without sensors, drawn as a plain line along their cameras
+    for (const a of d.areas || []) {
+      if (!a.corridor.length) continue;
+      const pts = a.corridor.map(([la, lo]) => this.project(la, lo));
+      roads.append(el("polyline", { class: "corridor", points: pts.map((p) => p.join(",")).join(" ") }));
+    }
+
     // the road
     const pickedSeg = this.picked ? (d.incidents.find((i) => i.id === this.picked) || {}).segment : null;
     d.segments.forEach((s, idx) => {
@@ -279,7 +317,7 @@ export class RoadMap {
       const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, ang = (Math.atan2(y2 - y1, x2 - x1) * 180) / Math.PI;
       marks.append(el("path", { class: "arrow", d: "M -5 -4 L 5 0 L -5 4 Z", transform: `translate(${mx} ${my}) rotate(${ang})` }));
       const label = speed === null ? s.id.replace("NH48-", "") : `${s.id.replace("NH48-", "")}  ${Math.round(speed)} km/h`;
-      marks.append(el("text", { class: "seg-label", x: mx + 16, y: my + 4 }, label));
+      if (this.view.ppm > 0.03) marks.append(el("text", { class: "seg-label", x: mx + 16, y: my + 4 }, label));
       void idx;
     });
 
@@ -297,11 +335,13 @@ export class RoadMap {
     for (const c of d.cameras || []) {
       const [x, y] = this.project(c.lat, c.lon);
       if (x < -40 || y < -40 || x > w + 40 || y > h + 40) continue;
-      const g = el("g", { class: `cam${seen.has(c.id) ? " saw" : ""}`, transform: `translate(${x} ${y})`, "data-hit": "1" });
+      const g = el("g", { class: `cam${seen.has(c.id) ? " saw" : ""}${this.selected === c.id ? " sel" : ""}`, transform: `translate(${x} ${y})`, "data-hit": "1" });
+      if (this.on.camera) { g.style.cursor = "pointer"; g.addEventListener("click", () => this.on.camera(c.id)); }
       g.append(el("path", { class: "cone", d: "M0 0 L-9 -30 L9 -30 Z", transform: `rotate(${c.heading_deg})` }),
                el("circle", { r: 7 }), el("text", { x: 0, y: 0 }, "C"));
       if (showNames0(this.view.ppm)) g.append(el("text", { class: "fac-name", x: 11, y: 4, style: "text-anchor:start" }, c.id));
-      this.hover(g, `Camera ${c.id}`, [`${c.road}, facing ${Math.round(c.heading_deg)} degrees`, seen.has(c.id) ? "Reported an accident" : "Watching"]);
+      this.hover(g, `${c.name || "Camera"} (${c.id})`, [`${c.road}, facing ${Math.round(c.heading_deg)} degrees`,
+        ...(c.good !== undefined ? [`${c.good} good and ${c.bad} bad videos`] : []), seen.has(c.id) ? "Reported an accident" : "Watching"]);
       marks.append(g);
     }
 

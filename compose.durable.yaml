@@ -1,0 +1,10 @@
+# Adds Kafka between the services and Postgres for state.
+#   docker compose -f compose.yaml -f compose.durable.yaml --profile durable up --build
+services:
+  core:
+    depends_on:
+      kafka: { condition: service_healthy }
+      postgres: { condition: service_healthy }
+    environment:
+      ATMS_KAFKA_BOOTSTRAP: kafka:19092
+      ATMS_DATABASE_URL: postgresql://atms:atms-dev@postgres:5432/atms

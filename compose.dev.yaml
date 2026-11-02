@@ -1,0 +1,13 @@
+# Edit the code and see it without rebuilding. Mounts src into the containers.
+#   docker compose -f compose.yaml -f compose.dev.yaml up -d
+# The web console files are served from disk, so a browser refresh is enough. Python changes need `docker compose restart core`.
+services:
+  core:
+    volumes:
+      - ./src:/app/src:ro
+  agencies:
+    volumes:
+      - ./src:/app/src:ro
+  detector:
+    volumes:
+      - ./src:/app/src:ro

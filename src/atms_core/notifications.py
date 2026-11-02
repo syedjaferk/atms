@@ -10,6 +10,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Callable
@@ -44,6 +45,28 @@ SEED_CONTACTS: list[Contact] = [
               ["incident.verified", "incident.rejected", "incident.resolved", "incident.closed"],
               agency=a, secret=f"dev-secret-{a.value}") for a in Agency],
 ]
+
+
+def network_contacts(agencies_url: str | None = None) -> list[Contact]:
+    """Who gets told, built from the network. One duty officer per road, one desk per station, one supervisor.
+
+    A station is only told about an incident when it is one of the nearest stations of its agency (see NearbyStations), so a
+    crash in Chennai never pages Pune.
+    """
+    from atms_contracts import network
+
+    base = (agencies_url or os.environ.get("ATMS_AGENCIES_URL", "http://localhost:9100")).rstrip("/")
+    net = network.load()
+    out = [Contact("supervisor", "Control room supervisor", "sms", "+910000000002", "supervisor", ["dispatch.escalation", "incident.closed"])]
+    for i, a in enumerate(net.areas.values(), 1):
+        out.append(Contact(f"duty-{a.id}", f"Duty officer {a.name}", "sms", f"+9100000010{i:02d}", "duty_officer",
+                           ["incident.verified", "incident.rejected", "incident.resolved", "incident.closed"],
+                           road_segment=a.road_segment, min_severity=Severity.major))
+    for st in net.stations:
+        out.append(Contact(f"stn-{st.id}", st.name, "webhook", f"{base}/v1/agencies/{st.agency.value}/notice?station={st.id}", "agency",
+                           ["incident.verified", "incident.rejected", "incident.resolved", "incident.closed"],
+                           agency=st.agency, secret=f"dev-secret-{st.agency.value}"))
+    return out
 
 
 @dataclass(frozen=True)
@@ -89,8 +112,9 @@ def render(kind: str, inc: Incident, channel: str, agency: Agency | None = None,
 class NotificationService:
     def __init__(self, store: Store, sms: list[SmsProvider], webhook: WebhookSender, config: NotifyConfig | None = None,
                  clock: Callable[[], datetime] = lambda: datetime.now(timezone.utc),
-                 receipt_secrets: dict[str, str] | None = None):
+                 receipt_secrets: dict[str, str] | None = None, geo=None, nearest_stations: int = 2):
         self.store, self.sms, self.webhook = store, sms, webhook
+        self.geo, self.nearest_stations = geo, nearest_stations
         self.config, self.clock = config or NotifyConfig(), clock
         self.receipt_secrets = receipt_secrets or {}
         self._inflight: set[UUID] = set()
@@ -112,8 +136,15 @@ class NotificationService:
                 continue
             if c.role == "agency" and c.agency not in self._agencies_in_play(inc):
                 continue
+            if c.id.startswith("stn-") and self.geo is not None and c.id[4:] not in self._nearby(inc, c.agency):
+                continue
             out.append(c)
         return out
+
+    def _nearby(self, inc: Incident, agency: Agency) -> set[str]:
+        """Ids of the stations of this agency that are closest to the incident, plus any that were actually dispatched."""
+        near = {r.facility.id for r in self.geo.nearest(agency, inc.location, self.nearest_stations)}
+        return near | {a.facility for a in self.store.for_incident(inc.id) if a.facility and a.agency == agency}
 
     def _kind(self, ev: Envelope) -> tuple[str, Agency | None] | None:
         if isinstance(ev, IncidentVerified):

@@ -16,6 +16,16 @@ function toast(text) {
 }
 
 const map = new RoadMap($("map"), $("tip"), { pick: (id) => pick(id === panel.picked ? null : id) });
+let areasBuilt = false;
+function areaButtons(data) {
+  if (areasBuilt) return;
+  areasBuilt = true;
+  const bar = $("areas");
+  const mk = (id, name) => { const b = document.createElement("button"); b.dataset.area = id; b.textContent = name; b.className = "ghost";
+    b.addEventListener("click", () => map.setArea(id)); return b; };
+  bar.replaceChildren(mk("all", "All areas"), ...(data.areas || []).map((x) => mk(x.id, x.name.replace(/ \(.*/, ""))));
+  map.onArea = (id) => bar.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.area === id)));
+}
 const panel = new Panel(
   { list: $("list"), empty: $("empty"), count: $("count"), detail: $("detail") },
   { pick: (id) => pick(id === panel.picked ? null : id), refresh: () => refresh(), toast });
@@ -28,6 +38,7 @@ function pick(id) {
 async function refresh() {
   try {
     const data = await call("/v1/map");
+    areaButtons(data);
     map.set(data);
     panel.setIncidents(data.incidents);
     feed(data.incidents);
@@ -77,7 +88,7 @@ const signOut = gateControl.signOut;
 
 $("zoom-in").addEventListener("click", () => map.zoom(1.4));
 $("zoom-out").addEventListener("click", () => map.zoom(1 / 1.4));
-$("fit").addEventListener("click", () => { map.fit(); map.draw(); });
+$("fit").addEventListener("click", () => map.setArea(map.area));
 const streets = $("streets");
 function setStreets(on) { streets.setAttribute("aria-pressed", String(on)); map.setTiles(on); try { localStorage.setItem("atms.streets", on ? "1" : "0"); } catch { /* not remembered */ } }
 streets.addEventListener("click", () => setStreets(streets.getAttribute("aria-pressed") !== "true"));

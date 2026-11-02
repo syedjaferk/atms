@@ -28,6 +28,8 @@ def main(argv: list[str] | None = None) -> int:
     c.add_argument("path", help="a video, or a folder of videos / numbered frames (Accident and Non Accident subfolders are used as labels)")
     c.add_argument("--limit", type=int, default=0, help="check at most this many clips, balanced across labels")
     c.add_argument("--frames", type=int, default=5, help="frames sampled per clip")
+    c.add_argument("--only", choices=["videos", "frames"], help="ignore the other kind of input under the folder")
+    c.add_argument("--json", help="write every verdict to this file")
     c.add_argument("--cameras", default="GNT001", help="camera ids to place detections at, comma separated, used in turn")
     c.add_argument("--publish", action="store_true", help="send each confirmed accident over MQTT as a camera would")
     c.add_argument("--api", default="http://localhost:8000", help="core API, queried after publishing to show what happened")
@@ -70,6 +72,15 @@ def main(argv: list[str] | None = None) -> int:
     return 0 if ok else 1
 
 
+def write_json(path: str, verdicts) -> None:
+    import json
+
+    json.dump([{"name": v.clip.name, "file": str(v.clip.video or ""), "accident": v.accident, "scores": v.scores,
+                **({"confidence": v.detection.confidence, "severity": v.detection.severity.value, "vehicles": v.detection.vehicles,
+                    "frames_confirmed": v.detection.frames_confirmed} if v.detection else {})} for v in verdicts],
+              open(path, "w"), indent=1)
+
+
 def run_check(args) -> int:
     import itertools
     import time
@@ -80,7 +91,7 @@ def run_check(args) -> int:
 
     from . import checker
 
-    clips = checker.discover(args.path)
+    clips = checker.discover(args.path, args.only)
     if args.limit:
         yes = [c for c in clips if c.expected is True]
         no = [c for c in clips if c.expected is False]
@@ -101,6 +112,8 @@ def run_check(args) -> int:
     for clip in clips:
         v = checker.check(det, clip, args.frames)
         verdicts.append(v)
+        if args.json:
+            write_json(args.json, verdicts)           # after every clip, so a long run can be stopped and still be used
         d = v.detection
         mark = "" if v.agrees is None else ("  ok" if v.agrees else "  DISAGREES with label")
         detail = f"{d.severity.value}, {d.vehicles} vehicle(s), lanes {','.join(d.lanes)}, confidence {d.confidence}" if d else "no accident"

@@ -107,7 +107,7 @@ def build_system(hub: AgencyAdapter, vms: VmsClient | None = None, policy: Polic
     traffic = TrafficManagement(store, bus, vms or SimulatedVms())
     audit = AuditSink(store)
     notifications = NotificationService(store, sms or [RecordingSms("primary"), RecordingSms("fallback")],
-                                        webhook or RecordingWebhook(), notify, clock, receipt_secrets)
+                                        webhook or RecordingWebhook(), notify, clock, receipt_secrets, geo=geo)
     relay = OutboxRelay(store.repo, bus)
     store.relay = relay
 
