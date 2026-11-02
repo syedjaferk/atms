@@ -1,0 +1,112 @@
+{
+  "$defs": {
+    "Agency": {
+      "enum": [
+        "police",
+        "ambulance",
+        "highway_patrol",
+        "fire",
+        "tow"
+      ],
+      "title": "Agency",
+      "type": "string"
+    },
+    "AssignmentAckedData": {
+      "additionalProperties": false,
+      "properties": {
+        "agency": {
+          "$ref": "#/$defs/Agency"
+        },
+        "assignment_id": {
+          "format": "uuid",
+          "title": "Assignment Id",
+          "type": "string"
+        },
+        "eta_s": {
+          "minimum": 0,
+          "title": "Eta S",
+          "type": "integer"
+        },
+        "unit_ref": {
+          "title": "Unit Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assignment_id",
+        "agency",
+        "unit_ref",
+        "eta_s"
+      ],
+      "title": "AssignmentAckedData",
+      "type": "object"
+    }
+  },
+  "$id": "https://atms.local/events/assignment.acked.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/AssignmentAckedData"
+    },
+    "dedup_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dedup Key"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "incident_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Incident Id"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "producer": {
+      "title": "Producer",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "type": {
+      "const": "assignment.acked",
+      "default": "assignment.acked",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "producer",
+    "data"
+  ],
+  "title": "AssignmentAcked",
+  "type": "object"
+}

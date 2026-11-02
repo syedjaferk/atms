@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ATMS Operator Console</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="controller.css">
+</head>
+<body>
+  <header class="bar">
+    <h1>ATMS operator console</h1>
+    <nav class="nav" aria-label="Pages">
+      <a href="index.html" aria-current="page">Map</a>
+      <a href="controller.html">Controller</a>
+    </nav>
+    <div class="when" role="group" aria-label="Show the road at">
+      <button data-h="0" class="on">Now</button>
+      <button data-h="15">In 15 min</button>
+      <button data-h="30">In 30 min</button>
+      <button data-h="60">In 60 min</button>
+    </div>
+    <div class="status">
+      <span id="model" class="muted"></span>
+      <span id="link" class="link down" title="Live connection"><i></i><b id="link-text">Offline</b></span>
+      <button id="signout" class="ghost" hidden>Sign out</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="mapwrap" aria-label="Road map">
+      <svg id="map" role="img" aria-label="Map of the highway, facilities and incidents"></svg>
+      <aside id="feed" class="feed" aria-label="Alerts sent" aria-live="polite" hidden>
+        <h2>Alerts sent to officials</h2>
+        <ul id="feed-list"></ul>
+      </aside>
+      <div class="legend" aria-label="Legend">
+        <span><i class="sw free"></i>Free</span>
+        <span><i class="sw moderate"></i>Moderate</span>
+        <span><i class="sw heavy"></i>Heavy</span>
+        <span><i class="sw severe"></i>Severe</span>
+        <span><i class="sw none"></i>No data</span>
+        <span>C camera</span>
+        <span>A P F H T facilities</span>
+        <span>Coloured dots are units on the move</span>
+      </div>
+      <div class="tools">
+        <button id="zoom-in" class="ghost" aria-label="Zoom in">+</button>
+        <button id="zoom-out" class="ghost" aria-label="Zoom out">-</button>
+        <button id="fit" class="ghost">Fit</button>
+        <button id="streets" class="ghost" aria-pressed="true">Streets</button>
+      </div>
+      <div id="tip" class="tip" hidden></div>
+      <p class="scale">Map data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></p>
+    </section>
+
+    <aside class="panel" aria-label="Incidents">
+      <div class="panel-head">
+        <h2>Open incidents <span id="count" class="pill">0</span></h2>
+      </div>
+      <ul id="list" class="list"></ul>
+      <p id="empty" class="muted pad" hidden>Nothing open. The road is quiet.</p>
+      <section id="detail" class="detail" hidden></section>
+    </aside>
+  </main>
+
+  <div id="gate" class="gate" hidden>
+    <form id="gate-form" class="card">
+      <h2>Sign in</h2>
+      <p class="muted">Enter an operator token. It stays in this tab only.</p>
+      <label for="token">Operator token</label>
+      <input id="token" type="password" autocomplete="off" required>
+      <p id="gate-error" class="error" role="alert" hidden></p>
+      <button type="submit">Open the console</button>
+    </form>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

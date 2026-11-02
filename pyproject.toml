@@ -1,0 +1,46 @@
+[project]
+name = "atms"
+version = "0.1.0"
+description = "Advanced Traffic Management System: contracts and simulators"
+requires-python = ">=3.10"
+dependencies = [
+  "pydantic>=2.7",
+  "paho-mqtt>=2.1",
+  "fastapi>=0.110",
+  "uvicorn>=0.29",
+  "websockets>=12",
+  "httpx>=0.27",
+  "confluent-kafka>=2.5",
+  "psycopg[binary]>=3.2",
+]
+
+[project.optional-dependencies]
+vision = [
+  "transformers>=4.45",
+  "pillow",
+  "opencv-python-headless",
+  "timm",
+  # install torch and torchvision from the CPU index first:
+  #   uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+]
+dev = [
+  "pytest>=7.4",
+  "jsonschema>=4.20",
+  "pyyaml>=6",
+  "openapi-spec-validator>=0.7",
+  "pika>=1.3",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+atms_core = ["migrations/*.sql", "console/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: needs the compose stack (set ATMS_BROKER_HOST or ATMS_DB_URL)"]

@@ -1,0 +1,115 @@
+{
+  "$defs": {
+    "NotificationChannel": {
+      "enum": [
+        "sms",
+        "webhook"
+      ],
+      "title": "NotificationChannel",
+      "type": "string"
+    },
+    "NotificationSentData": {
+      "additionalProperties": false,
+      "description": "Accepted by a provider. No phone numbers or URLs travel on the bus, only the contact id.",
+      "properties": {
+        "attempt": {
+          "minimum": 1,
+          "title": "Attempt",
+          "type": "integer"
+        },
+        "channel": {
+          "$ref": "#/$defs/NotificationChannel"
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "notification_id": {
+          "format": "uuid",
+          "title": "Notification Id",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "notification_id",
+        "contact_id",
+        "channel",
+        "provider",
+        "attempt"
+      ],
+      "title": "NotificationSentData",
+      "type": "object"
+    }
+  },
+  "$id": "https://atms.local/events/notification.sent.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/NotificationSentData"
+    },
+    "dedup_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dedup Key"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "incident_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Incident Id"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "producer": {
+      "title": "Producer",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "type": {
+      "const": "notification.sent",
+      "default": "notification.sent",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "producer",
+    "data"
+  ],
+  "title": "NotificationSent",
+  "type": "object"
+}

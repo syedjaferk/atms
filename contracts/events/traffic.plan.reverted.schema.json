@@ -1,0 +1,86 @@
+{
+  "$defs": {
+    "TrafficPlanRevertedData": {
+      "additionalProperties": false,
+      "properties": {
+        "plan_id": {
+          "format": "uuid",
+          "title": "Plan Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_id"
+      ],
+      "title": "TrafficPlanRevertedData",
+      "type": "object"
+    }
+  },
+  "$id": "https://atms.local/events/traffic.plan.reverted.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/TrafficPlanRevertedData"
+    },
+    "dedup_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dedup Key"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "incident_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Incident Id"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "producer": {
+      "title": "Producer",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "type": {
+      "const": "traffic.plan.reverted",
+      "default": "traffic.plan.reverted",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "producer",
+    "data"
+  ],
+  "title": "TrafficPlanReverted",
+  "type": "object"
+}

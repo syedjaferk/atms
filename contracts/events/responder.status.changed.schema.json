@@ -1,0 +1,165 @@
+{
+  "$defs": {
+    "Agency": {
+      "enum": [
+        "police",
+        "ambulance",
+        "highway_patrol",
+        "fire",
+        "tow"
+      ],
+      "title": "Agency",
+      "type": "string"
+    },
+    "AssignmentState": {
+      "enum": [
+        "requested",
+        "acked",
+        "timed_out",
+        "declined",
+        "en_route",
+        "on_scene",
+        "done",
+        "cancelled"
+      ],
+      "title": "AssignmentState",
+      "type": "string"
+    },
+    "IncidentState": {
+      "enum": [
+        "detected",
+        "verified",
+        "rejected",
+        "dispatching",
+        "dispatched",
+        "in_progress",
+        "clearing",
+        "resolved",
+        "closed"
+      ],
+      "title": "IncidentState",
+      "type": "string"
+    },
+    "ResponderStatus": {
+      "description": "Statuses a responder may report through the API.",
+      "enum": [
+        "en_route",
+        "on_scene",
+        "done"
+      ],
+      "title": "ResponderStatus",
+      "type": "string"
+    },
+    "ResponderStatusChangedData": {
+      "additionalProperties": false,
+      "properties": {
+        "agency": {
+          "$ref": "#/$defs/Agency"
+        },
+        "assignment_id": {
+          "format": "uuid",
+          "title": "Assignment Id",
+          "type": "string"
+        },
+        "eta_s": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eta S"
+        },
+        "incident_state": {
+          "$ref": "#/$defs/IncidentState"
+        },
+        "previous": {
+          "$ref": "#/$defs/AssignmentState"
+        },
+        "status": {
+          "$ref": "#/$defs/ResponderStatus"
+        }
+      },
+      "required": [
+        "assignment_id",
+        "agency",
+        "previous",
+        "status",
+        "incident_state"
+      ],
+      "title": "ResponderStatusChangedData",
+      "type": "object"
+    }
+  },
+  "$id": "https://atms.local/events/responder.status.changed.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/ResponderStatusChangedData"
+    },
+    "dedup_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dedup Key"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "incident_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Incident Id"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "producer": {
+      "title": "Producer",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "type": {
+      "const": "responder.status.changed",
+      "default": "responder.status.changed",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "producer",
+    "data"
+  ],
+  "title": "ResponderStatusChanged",
+  "type": "object"
+}

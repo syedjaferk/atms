@@ -1,0 +1,106 @@
+{
+  "$defs": {
+    "Agency": {
+      "enum": [
+        "police",
+        "ambulance",
+        "highway_patrol",
+        "fire",
+        "tow"
+      ],
+      "title": "Agency",
+      "type": "string"
+    },
+    "AssignmentDeclinedData": {
+      "additionalProperties": false,
+      "properties": {
+        "agency": {
+          "$ref": "#/$defs/Agency"
+        },
+        "assignment_id": {
+          "format": "uuid",
+          "title": "Assignment Id",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assignment_id",
+        "agency",
+        "reason"
+      ],
+      "title": "AssignmentDeclinedData",
+      "type": "object"
+    }
+  },
+  "$id": "https://atms.local/events/assignment.declined.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/AssignmentDeclinedData"
+    },
+    "dedup_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dedup Key"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "incident_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Incident Id"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "producer": {
+      "title": "Producer",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "type": {
+      "const": "assignment.declined",
+      "default": "assignment.declined",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "producer",
+    "data"
+  ],
+  "title": "AssignmentDeclined",
+  "type": "object"
+}

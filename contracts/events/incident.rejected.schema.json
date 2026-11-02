@@ -1,0 +1,106 @@
+{
+  "$defs": {
+    "IncidentRejectedData": {
+      "additionalProperties": false,
+      "properties": {
+        "operator_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Operator Id"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "rejected_by": {
+          "enum": [
+            "auto",
+            "operator"
+          ],
+          "title": "Rejected By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rejected_by",
+        "reason"
+      ],
+      "title": "IncidentRejectedData",
+      "type": "object"
+    }
+  },
+  "$id": "https://atms.local/events/incident.rejected.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/IncidentRejectedData"
+    },
+    "dedup_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dedup Key"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "incident_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Incident Id"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "producer": {
+      "title": "Producer",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "type": {
+      "const": "incident.rejected",
+      "default": "incident.rejected",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "producer",
+    "data"
+  ],
+  "title": "IncidentRejected",
+  "type": "object"
+}

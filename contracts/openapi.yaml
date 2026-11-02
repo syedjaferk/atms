@@ -1,0 +1,644 @@
+openapi: 3.0.3
+info:
+  title: ATMS Incident API
+  version: 0.1.0
+  description: >
+    Public API used by the operations dashboard and by responder or agency systems.
+    The Incident Service is the only writer of incident state. Unsafe calls accept an
+    Idempotency-Key header and a repeated key returns the first result.
+servers:
+  - url: http://localhost:8000
+security:
+  - bearer: []
+paths:
+  /v1/incidents:
+    get:
+      summary: List incidents (dashboard snapshot)
+      operationId: listIncidents
+      parameters:
+        - name: state
+          in: query
+          schema: { type: array, items: { $ref: "#/components/schemas/IncidentState" } }
+        - name: road
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      responses:
+        "200":
+          description: Incidents, newest first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/Incident" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+  /v1/incidents/{incident_id}:
+    get:
+      summary: Incident detail with timeline
+      operationId: getIncident
+      parameters:
+        - $ref: "#/components/parameters/IncidentId"
+      responses:
+        "200":
+          description: The incident
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/IncidentDetail" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /v1/incidents/{incident_id}/verify:
+    post:
+      summary: Operator verifies a detected incident
+      operationId: verifyIncident
+      parameters:
+        - $ref: "#/components/parameters/IncidentId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "200":
+          description: Incident now verified
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Incident" }
+        "409": { $ref: "#/components/responses/Conflict" }
+  /v1/incidents/{incident_id}/reject:
+    post:
+      summary: Operator rejects an incident (false positive). Dispatch and lane plan are compensated.
+      operationId: rejectIncident
+      parameters:
+        - $ref: "#/components/parameters/IncidentId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, minLength: 3 }
+      responses:
+        "200":
+          description: Incident now rejected
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Incident" }
+        "409": { $ref: "#/components/responses/Conflict" }
+  /v1/incidents/{incident_id}/resolve:
+    post:
+      summary: Responder or operator confirms the road is clear
+      description: Allowed only while the incident is in the clearing state. Triggers the lane plan revert and closeout.
+      operationId: resolveIncident
+      parameters:
+        - $ref: "#/components/parameters/IncidentId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "200":
+          description: Incident now resolved
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Incident" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "409": { $ref: "#/components/responses/Conflict" }
+  /v1/incidents/{incident_id}/close:
+    post:
+      summary: Operator closes a resolved or rejected incident
+      operationId: closeIncident
+      parameters:
+        - $ref: "#/components/parameters/IncidentId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      responses:
+        "200":
+          description: Incident now closed
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Incident" }
+        "409": { $ref: "#/components/responses/Conflict" }
+  /v1/incidents/{incident_id}/assignments/{assignment_id}:
+    patch:
+      summary: Responder reports status and ETA
+      description: >
+        The caller must own the assignment. Transitions are validated against the
+        assignment state machine. An out of order update returns 409 with the current state.
+      operationId: updateAssignment
+      parameters:
+        - $ref: "#/components/parameters/IncidentId"
+        - name: assignment_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { $ref: "#/components/schemas/ResponderStatus" }
+                eta_s: { type: integer, minimum: 0 }
+                note: { type: string }
+      responses:
+        "200":
+          description: Updated assignment
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Assignment" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { $ref: "#/components/responses/Conflict" }
+  /v1/incidents/{incident_id}/notes:
+    post:
+      summary: Add a note to the timeline
+      operationId: addNote
+      parameters:
+        - $ref: "#/components/parameters/IncidentId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text: { type: string, minLength: 1, maxLength: 2000 }
+      responses:
+        "201":
+          description: Note added
+  /v1/incidents/{incident_id}/evidence:
+    get:
+      summary: Short-lived signed URLs for clips and the report
+      operationId: getEvidence
+      parameters:
+        - $ref: "#/components/parameters/IncidentId"
+      responses:
+        "200":
+          description: Evidence links, valid for a few minutes
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required: [kind, url, expires_at]
+                      properties:
+                        kind: { type: string, enum: [clip, report] }
+                        url: { type: string, format: uri }
+                        expires_at: { type: string, format: date-time }
+  /v1/incidents/{incident_id}/review:
+    get:
+      summary: Everything a controller needs to judge one incident
+      description: >
+        The detector's assessment against the auto-verify policy, signed links to the clips with whether each file is
+        on the server, which of verify, reject, resolve and close the incident would accept right now, and for each
+        unit the next statuses an operator may set on its behalf.
+      operationId: getReview
+      parameters:
+        - $ref: "#/components/parameters/IncidentId"
+      responses:
+        "200":
+          description: Review data
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [incident, assessment, evidence, allowed, units]
+                properties:
+                  incident: { $ref: "#/components/schemas/Incident" }
+                  assessment:
+                    type: object
+                    required: [outcome, confidence, severity, review_confidence, auto_verify_confidence, would_auto_verify]
+                    properties:
+                      outcome: { type: string, enum: [waiting_for_operator, verified_automatically, verified_by_operator, rejected] }
+                      confidence: { type: number }
+                      severity: { type: string }
+                      lanes_closed: { type: integer }
+                      cameras: { type: array, items: { type: string } }
+                      clips: { type: integer }
+                      verified_by: { type: string, nullable: true }
+                      rejected_reason: { type: string, nullable: true }
+                      rejected_by: { type: string, nullable: true }
+                      review_confidence: { type: number }
+                      auto_verify_confidence: { type: number }
+                      auto_verify_min_severity: { type: string }
+                      would_auto_verify: { type: boolean }
+                  evidence:
+                    type: array
+                    items:
+                      type: object
+                      required: [kind, url, expires_at, available]
+                      properties:
+                        kind: { type: string, enum: [clip, report] }
+                        url: { type: string, format: uri }
+                        expires_at: { type: string, format: date-time }
+                        camera_id: { type: string, nullable: true }
+                        sha256: { type: string, nullable: true }
+                        available: { type: boolean }
+                        size_bytes: { type: integer, nullable: true }
+                  allowed:
+                    type: object
+                    required: [verify, reject, resolve, close]
+                    properties:
+                      verify: { type: boolean }
+                      reject: { type: boolean }
+                      resolve: { type: boolean }
+                      close: { type: boolean }
+                  units:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, agency, state, can]
+                      properties:
+                        id: { type: string, format: uuid }
+                        agency: { type: string }
+                        unit_ref: { type: string, nullable: true }
+                        state: { type: string }
+                        eta_s: { type: integer, nullable: true }
+                        can: { type: array, items: { type: string, enum: [en_route, on_scene, done] } }
+        "404":
+          description: No such incident
+  /v1/map:
+    get:
+      summary: Everything the operator map draws, in one response
+      operationId: getMap
+      responses:
+        "200":
+          description: Segments with speed and forecasts, facilities, message boards and open incidents
+          content:
+            application/json:
+              schema: { type: object }
+  /v1/incidents/{incident_id}/notifications:
+    get:
+      summary: Who was told about this incident, and whether it arrived
+      description: Addresses are masked. Each row is one source event for one contact.
+      operationId: listNotifications
+      parameters:
+        - $ref: "#/components/parameters/IncidentId"
+      responses:
+        "200":
+          description: Notices, oldest first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/Notification" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /v1/notifications/{notification_id}/retry:
+    post:
+      summary: Operator retries a failed notice with a fresh set of attempts
+      operationId: retryNotification
+      parameters:
+        - name: notification_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: The notice, queued again
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Notification" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { $ref: "#/components/responses/Conflict" }
+  /v1/notifications/receipts/{provider}:
+    post:
+      summary: Delivery receipt from an SMS provider
+      description: >
+        Not a bearer endpoint. The X-Signature header carries the hex HMAC-SHA256 of the raw body
+        using the shared secret for that provider. A repeated receipt is accepted and changes nothing.
+      operationId: receiveReceipt
+      security: []
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema: { type: string }
+        - name: X-Signature
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message_id, status]
+              properties:
+                message_id: { type: string }
+                status: { type: string, enum: [delivered, undelivered] }
+                reason: { type: string }
+      responses:
+        "200":
+          description: Receipt recorded
+        "401":
+          description: Bad signature
+        "404": { $ref: "#/components/responses/NotFound" }
+  /v1/traffic/readings:
+    post:
+      summary: Batch of speed and volume readings from road sensors
+      description: Readings older than seven days or more than five minutes ahead are rejected individually, not the whole batch.
+      operationId: postReadings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  maxItems: 5000
+                  items:
+                    type: object
+                    required: [segment, ts, speed_kmh, flow_vph]
+                    properties:
+                      segment: { type: string }
+                      ts: { type: string, format: date-time }
+                      speed_kmh: { type: number, minimum: 0, maximum: 200 }
+                      flow_vph: { type: number, minimum: 0 }
+      responses:
+        "200":
+          description: Counts accepted and the rejected readings with reasons
+        "403": { $ref: "#/components/responses/Forbidden" }
+  /v1/traffic/weather:
+    post:
+      summary: Observed weather and weather forecasts
+      operationId: postWeather
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [ts, rain_mm_h, visibility_km]
+                    properties:
+                      ts: { type: string, format: date-time }
+                      rain_mm_h: { type: number, minimum: 0 }
+                      visibility_km: { type: number, minimum: 0 }
+                      kind: { type: string, enum: [observed, forecast] }
+      responses:
+        "200":
+          description: Accepted
+  /v1/forecast:
+    get:
+      summary: Worst expected congestion for every segment
+      operationId: forecastOverview
+      responses:
+        "200":
+          description: One row per segment
+  /v1/whatif:
+    post:
+      summary: Run made up situations on the traffic twin and compare them with a normal day
+      description: >
+        Each scenario can combine incidents (segment, minutes from the start, duration, lanes closed), demand changes
+        (an event adds traffic, a diversion removes it), weather, and responses (clear faster, open the shoulder, advise
+        a share of drivers to divert). Starts from the road as it is now when readings are fresh and the start is now,
+        otherwise from a typical day. Up to 8 scenarios and 12 hours per call.
+      operationId: whatIf
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [scenarios]
+              properties:
+                start: { type: string, format: date-time }
+                horizon_min: { type: integer, minimum: 30, maximum: 720, default: 240 }
+                scenarios:
+                  type: array
+                  minItems: 1
+                  maxItems: 8
+                  items: { type: object, required: [name] }
+      responses:
+        "200":
+          description: Baseline, each scenario with KPIs, series and the difference from a normal day, and how well the twin checked out on past days
+        "422":
+          description: Invalid scenario
+        "503":
+          description: No twin loaded
+  /v1/incidents/{incident_id}/whatif:
+    post:
+      summary: How to handle an incident that is happening now
+      description: >
+        Six ways of handling it (as things stand, clear faster, open the shoulder, advise diversion, combinations) on the
+        same road state, with vehicle hours saved against doing nothing extra, the cost of every extra ten minutes closed,
+        and a recommendation. The assumptions are listed in the answer.
+      operationId: incidentWhatIf
+      parameters:
+        - $ref: "#/components/parameters/IncidentId"
+      responses:
+        "200":
+          description: Options ranked by delay
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422":
+          description: The incident is not on a segment the twin covers
+        "503":
+          description: No twin loaded
+  /v1/forecast/model:
+    get:
+      summary: The active model, how it was trained and how it did on data it had not seen
+      operationId: forecastModel
+      responses:
+        "200":
+          description: Model version, training window and backtest
+        "503":
+          description: No model loaded
+  /v1/forecast/accuracy:
+    get:
+      summary: How the live forecasts have actually performed, with a drift flag
+      operationId: forecastAccuracy
+      parameters:
+        - name: hours
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 336, default: 24 }
+      responses:
+        "200":
+          description: Error against the backtest and against keeping the current speed
+  /v1/forecast/{segment}:
+    get:
+      summary: Speed and congestion level 15, 30 and 60 minutes ahead, with a range and the reasons
+      description: >
+        With lanes_closed or rain_mm_h the answer is a what-if from the same model with that one input changed.
+        Each forecast lists the factors that moved it, in km/h against the model's average.
+      operationId: forecastSegment
+      parameters:
+        - name: segment
+          in: path
+          required: true
+          schema: { type: string }
+        - name: horizons
+          in: query
+          schema: { type: string, default: "15,30,60" }
+        - name: lanes_closed
+          in: query
+          schema: { type: integer, minimum: 0, maximum: 3 }
+        - name: rain_mm_h
+          in: query
+          schema: { type: number, minimum: 0 }
+      responses:
+        "200":
+          description: Forecasts
+        "404":
+          description: Unknown segment
+        "503":
+          description: No model, or readings too old to forecast from
+  /v1/stream:
+    get:
+      summary: WebSocket upgrade for dashboard deltas
+      description: >
+        After the upgrade the server sends JSON messages of shape StreamMessage.
+        Every message carries the incident version. A gap means the client must
+        refetch the snapshot.
+      operationId: stream
+      responses:
+        "101":
+          description: Switching protocols
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    IncidentId:
+      name: incident_id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema: { type: string, maxLength: 128 }
+  responses:
+    Unauthorized:
+      description: Missing or invalid token
+    Forbidden:
+      description: The caller does not own this resource
+    NotFound:
+      description: No such resource
+    Conflict:
+      description: Transition not allowed from the current state
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Conflict" }
+  schemas:
+    IncidentState:
+      type: string
+      enum: [detected, verified, rejected, dispatching, dispatched, in_progress, clearing, resolved, closed]
+    AssignmentState:
+      type: string
+      enum: [requested, acked, timed_out, declined, en_route, on_scene, done, cancelled]
+    ResponderStatus:
+      type: string
+      enum: [en_route, on_scene, done]
+    Severity:
+      type: string
+      enum: [minor, major, critical]
+    Agency:
+      type: string
+      enum: [police, ambulance, highway_patrol, fire, tow]
+    Location:
+      type: object
+      required: [lat, lon]
+      properties:
+        lat: { type: number, minimum: -90, maximum: 90 }
+        lon: { type: number, minimum: -180, maximum: 180 }
+    Conflict:
+      type: object
+      required: [error, current_state]
+      properties:
+        error: { type: string }
+        current_state: { type: string }
+    Incident:
+      type: object
+      required: [id, state, severity, confidence, location, road_segment, version, opened_at]
+      properties:
+        id: { type: string, format: uuid }
+        state: { $ref: "#/components/schemas/IncidentState" }
+        severity: { $ref: "#/components/schemas/Severity" }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        location: { $ref: "#/components/schemas/Location" }
+        road_segment: { type: string }
+        version: { type: integer, minimum: 1 }
+        opened_at: { type: string, format: date-time }
+        resolved_at: { type: string, format: date-time, nullable: true }
+    Assignment:
+      type: object
+      required: [id, incident_id, agency, state]
+      properties:
+        id: { type: string, format: uuid }
+        incident_id: { type: string, format: uuid }
+        agency: { $ref: "#/components/schemas/Agency" }
+        unit_ref: { type: string, nullable: true }
+        state: { $ref: "#/components/schemas/AssignmentState" }
+        eta_s: { type: integer, nullable: true }
+        requested_at: { type: string, format: date-time }
+        acked_at: { type: string, format: date-time, nullable: true }
+    Notification:
+      type: object
+      required: [id, incident_id, contact, channel, address, kind, status, attempts, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        incident_id: { type: string, format: uuid }
+        contact: { type: string }
+        channel: { type: string, enum: [sms, webhook] }
+        address: { type: string, description: Masked }
+        kind: { type: string, enum: [incident.verified, incident.rejected, incident.resolved, incident.closed, dispatch.escalation] }
+        status: { type: string, enum: [pending, sent, delivered, failed] }
+        attempts: { type: integer, minimum: 0 }
+        provider: { type: string, nullable: true }
+        last_error: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+        sent_at: { type: string, format: date-time, nullable: true }
+        delivered_at: { type: string, format: date-time, nullable: true }
+    TimelineEntry:
+      type: object
+      required: [at, kind, summary]
+      properties:
+        at: { type: string, format: date-time }
+        kind: { type: string }
+        summary: { type: string }
+        actor: { type: string, nullable: true }
+    IncidentDetail:
+      allOf:
+        - $ref: "#/components/schemas/Incident"
+        - type: object
+          required: [assignments, timeline]
+          properties:
+            assignments:
+              type: array
+              items: { $ref: "#/components/schemas/Assignment" }
+            timeline:
+              type: array
+              items: { $ref: "#/components/schemas/TimelineEntry" }
+    StreamMessage:
+      type: object
+      required: [incident_id, version, event_type, incident]
+      properties:
+        incident_id: { type: string, format: uuid }
+        version: { type: integer }
+        event_type: { type: string }
+        incident: { $ref: "#/components/schemas/Incident" }

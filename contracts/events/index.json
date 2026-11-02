@@ -1,0 +1,25 @@
+{
+  "events": [
+    "accident.detected",
+    "assignment.acked",
+    "assignment.cancelled",
+    "assignment.declined",
+    "assignment.requested",
+    "assignment.timed_out",
+    "congestion.forecast",
+    "incident.closed",
+    "incident.created",
+    "incident.rejected",
+    "incident.resolved",
+    "incident.updated",
+    "incident.verified",
+    "notification.delivered",
+    "notification.failed",
+    "notification.sent",
+    "responder.status.changed",
+    "traffic.plan.applied",
+    "traffic.plan.reverted",
+    "video.ready"
+  ],
+  "schema_version": 1
+}

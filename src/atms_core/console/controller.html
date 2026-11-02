@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ATMS Controller</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="controller.css">
+</head>
+<body>
+  <header class="bar">
+    <h1>ATMS controller</h1>
+    <nav class="nav" aria-label="Pages">
+      <a href="index.html">Map</a>
+      <a href="controller.html" aria-current="page">Controller</a>
+    </nav>
+    <div class="status">
+      <span id="link" class="link down" title="Live connection"><i></i><b id="link-text">Offline</b></span>
+      <button id="signout" class="ghost" hidden>Sign out</button>
+    </div>
+  </header>
+
+  <main class="ctl">
+    <aside class="queue" aria-label="Incident queue">
+      <div class="tabs" role="tablist" id="tabs">
+        <button role="tab" data-tab="review" aria-selected="true">Needs review <span class="pill" id="n-review">0</span></button>
+        <button role="tab" data-tab="active" aria-selected="false">Active <span class="pill" id="n-active">0</span></button>
+        <button role="tab" data-tab="done" aria-selected="false">Finished <span class="pill" id="n-done">0</span></button>
+      </div>
+      <ul id="queue" class="list"></ul>
+      <p id="queue-empty" class="muted pad" hidden></p>
+    </aside>
+
+    <section class="stage" id="stage" aria-live="polite">
+      <p class="muted pad">Pick an incident from the queue to watch the clip and decide.</p>
+    </section>
+
+    <aside class="side" id="side" aria-label="Actions"></aside>
+  </main>
+
+  <div id="gate" class="gate" hidden>
+    <form id="gate-form" class="card">
+      <h2>Sign in</h2>
+      <p class="muted">Enter an operator token. It stays in this tab only.</p>
+      <label for="token">Operator token</label>
+      <input id="token" type="password" autocomplete="off" required>
+      <p id="gate-error" class="error" role="alert" hidden></p>
+      <button type="submit">Open the controller</button>
+    </form>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script type="module" src="controller.js"></script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+{
+  "$defs": {
+    "AccidentDetectedData": {
+      "additionalProperties": false,
+      "properties": {
+        "affected_lanes": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Affected Lanes",
+          "type": "array"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "heading_deg": {
+          "exclusiveMaximum": 360,
+          "minimum": 0,
+          "title": "Heading Deg",
+          "type": "number"
+        },
+        "location": {
+          "$ref": "#/$defs/Location"
+        },
+        "model_version": {
+          "title": "Model Version",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "site": {
+          "$ref": "#/$defs/Site"
+        },
+        "vehicles_involved": {
+          "minimum": 1,
+          "title": "Vehicles Involved",
+          "type": "integer"
+        },
+        "video_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Video Ref"
+        },
+        "video_status": {
+          "$ref": "#/$defs/VideoStatus",
+          "default": "uploading"
+        }
+      },
+      "required": [
+        "site",
+        "location",
+        "heading_deg",
+        "confidence",
+        "severity",
+        "vehicles_involved",
+        "affected_lanes",
+        "model_version"
+      ],
+      "title": "AccidentDetectedData",
+      "type": "object"
+    },
+    "Location": {
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Lon",
+          "type": "number"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "Location",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "minor",
+        "major",
+        "critical"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "Site": {
+      "additionalProperties": false,
+      "description": "Where a camera is. Segments never contain dots or slashes (see topics).",
+      "properties": {
+        "camera_id": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Camera Id",
+          "type": "string"
+        },
+        "city": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "City",
+          "type": "string"
+        },
+        "road": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Road",
+          "type": "string"
+        },
+        "state": {
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "city",
+        "road",
+        "camera_id"
+      ],
+      "title": "Site",
+      "type": "object"
+    },
+    "VideoStatus": {
+      "enum": [
+        "uploading",
+        "ready",
+        "failed"
+      ],
+      "title": "VideoStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://atms.local/events/accident.detected.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/AccidentDetectedData"
+    },
+    "dedup_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dedup Key"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "incident_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Incident Id"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "producer": {
+      "title": "Producer",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "type": {
+      "const": "accident.detected",
+      "default": "accident.detected",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "producer",
+    "data"
+  ],
+  "title": "AccidentDetected",
+  "type": "object"
+}

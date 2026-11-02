@@ -1,0 +1,140 @@
+{
+  "$defs": {
+    "CongestionForecastData": {
+      "additionalProperties": false,
+      "description": "Heavy or severe congestion is forecast on a road segment that was not heading for it a moment ago.",
+      "properties": {
+        "free_flow_kmh": {
+          "exclusiveMinimum": 0,
+          "title": "Free Flow Kmh",
+          "type": "number"
+        },
+        "high_kmh": {
+          "title": "High Kmh",
+          "type": "number"
+        },
+        "horizon_min": {
+          "minimum": 1,
+          "title": "Horizon Min",
+          "type": "integer"
+        },
+        "level": {
+          "enum": [
+            "heavy",
+            "severe"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "low_kmh": {
+          "title": "Low Kmh",
+          "type": "number"
+        },
+        "main_factor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Main Factor"
+        },
+        "model_version": {
+          "title": "Model Version",
+          "type": "string"
+        },
+        "predicted_speed_kmh": {
+          "minimum": 0,
+          "title": "Predicted Speed Kmh",
+          "type": "number"
+        },
+        "segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id",
+        "horizon_min",
+        "level",
+        "predicted_speed_kmh",
+        "low_kmh",
+        "high_kmh",
+        "free_flow_kmh",
+        "model_version"
+      ],
+      "title": "CongestionForecastData",
+      "type": "object"
+    }
+  },
+  "$id": "https://atms.local/events/congestion.forecast.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/CongestionForecastData"
+    },
+    "dedup_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dedup Key"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "incident_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Incident Id"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "producer": {
+      "title": "Producer",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "trace_id": {
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "type": {
+      "const": "congestion.forecast",
+      "default": "congestion.forecast",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "producer",
+    "data"
+  ],
+  "title": "CongestionForecast",
+  "type": "object"
+}
