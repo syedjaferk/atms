@@ -12,6 +12,7 @@ from pathlib import Path
 from uuid import UUID
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request, WebSocket, WebSocketDisconnect
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -81,10 +82,12 @@ def create_api(system: System, tokens: dict[str, Principal], signing_secret: str
     app = FastAPI(title="ATMS Incident API", version="0.1.0", lifespan=lifespan)
     app.state.gateway = gateway
 
-    def principal(authorization: str | None = Header(default=None)) -> Principal:
-        if not authorization or not authorization.lower().startswith("bearer "):
+    bearer = HTTPBearer(auto_error=False, description="A token such as ops-dev (development only)")   # gives Swagger its Authorize button
+
+    def principal(creds: HTTPAuthorizationCredentials | None = Depends(bearer)) -> Principal:
+        if creds is None or creds.scheme.lower() != "bearer" or not creds.credentials:
             raise HTTPException(401, "missing bearer token")
-        p = tokens.get(authorization[7:].strip())
+        p = tokens.get(creds.credentials.strip())
         if p is None:
             raise HTTPException(401, "invalid token")
         return p
