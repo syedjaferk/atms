@@ -190,3 +190,21 @@ def test_the_detector_node_refuses_unknown_videos_and_survives_a_broken_one(tmp_
         j = wait_for(c, c.post("/v1/analyze", json={"video_id": "a1"}).json()["job_id"])
         assert j["state"] == "failed" and j["error"]
         assert c.get("/health").json()["ok"] is True                                   # the worker is still alive
+
+
+@needs_ffmpeg
+def test_the_job_says_when_it_is_loading_the_models_and_when_loading_fails(tmp_path):
+    ds = tmp_path / "ds"
+    write_catalog(ds, [entry("a1", "CHN003")])
+    make_clip(ds / "clips" / "a1.mp4")
+
+    def broken():
+        raise OSError("no internet")
+
+    app = create_service(catalog_mod.load(ds, tmp_path), broken, lambda: FakeEdge(), tmp_path / "tmp", warm=False)
+    with TestClient(app) as c:
+        j = wait_for(c, c.post("/v1/analyze", json={"video_id": "a1"}).json()["job_id"])
+        assert j["state"] == "failed" and "no internet" in j["error"]
+        assert j["model"]["state"] == "failed" and "no internet" in j["model"]["error"]
+        h = c.get("/health").json()
+        assert h["model_loaded"] is False and h["model_state"] == "failed"

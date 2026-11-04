@@ -40,7 +40,11 @@ async function refreshMap() {
   areaButtons(data);
   map.set(data);
   const d = overview.detector;
-  $("detector").textContent = d.up ? (d.model_loaded ? "AI models ready" : "AI models loading") : "Detector node offline";
+  $("detector").textContent = !d.up ? "Detector node offline"
+    : d.model_loaded ? "AI models ready"
+    : d.model_state === "failed" ? "AI models failed to load"
+    : d.model_state === "loading" ? `AI models loading, ${d.model_seconds || 0} s` : "AI models not loaded yet";
+  S.detector = d;
   return data;
 }
 
@@ -112,8 +116,12 @@ function runView() {
   const j = S.job;
   if (!j) return null;
   const parts = [];
-  if (j.state === "queued") parts.push(h("p", { class: "muted" }, j.queue_position ? `Waiting, ${j.queue_position} job${j.queue_position === 1 ? "" : "s"} ahead.` : "Waiting for the models."));
-  if (j.state !== "queued") {
+  const m = j.model || {};
+  if (m.state === "failed" && !["done"].includes(j.state))
+    parts.push(h("p", { class: "error" }, `The AI models could not be loaded. ${m.error || ""} Check the detector log, it needs internet the first time to download them.`));
+  if (j.state === "queued") parts.push(h("p", { class: "muted" }, j.queue_position ? `Waiting, ${j.queue_position} other job${j.queue_position === 1 ? "" : "s"} ahead of this one.` : "Waiting for the detector to pick this up."));
+  if (j.state === "loading_models") parts.push(h("p", { class: "muted" }, "Loading the AI models. The first time they are downloaded, which can take several minutes. Nothing is wrong, this only happens once."));
+  if (j.state !== "queued" && j.state !== "loading_models") {
     parts.push(h("p", { class: "muted" }, j.state === "running" ? `Looking at frame ${j.frames_done} of ${j.frames_total || "?"}` : `Looked at ${j.frames_total} frames in ${j.seconds} s`));
     const scores = j.frame_scores || [];
     const total = j.frames_total || scores.length;

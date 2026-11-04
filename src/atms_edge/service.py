@@ -47,7 +47,7 @@ class Job:
     video_id: str
     camera_id: str
     publish: bool
-    state: str = "queued"               # queued, running, done, failed
+    state: str = "queued"               # queued, loading_models, running, done, failed
     done: int = 0
     total: int = 0
     scores: list[float] = field(default_factory=list)
@@ -58,8 +58,8 @@ class Job:
     created: float = field(default_factory=time.time)
     finished: float | None = None
 
-    def view(self, queue_position: int = 0) -> dict:
-        return {"job_id": self.id, "video_id": self.video_id, "camera_id": self.camera_id, "state": self.state,
+    def view(self, queue_position: int = 0, model: dict | None = None) -> dict:
+        return {"model": model, "job_id": self.id, "video_id": self.video_id, "camera_id": self.camera_id, "state": self.state,
                 "queue_position": queue_position, "frames_done": self.done, "frames_total": self.total,
                 "frame_scores": self.scores, "frame_times_s": self.times, "verdict": self.verdict, "published": self.published,
                 "error": self.error, "seconds": round((self.finished or time.time()) - self.created, 1)}
@@ -79,12 +79,20 @@ def create_service(catalog: catalog_mod.Catalog, detector: Callable[[], Accident
     pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="detector")
     model: dict = {}
     lock = threading.Lock()
+    status = {"state": "idle", "error": None, "since": time.time()}       # idle, loading, ready, failed
 
     def load_model() -> AccidentDetector:
         with lock:
             if "m" not in model:
                 t = time.time()
-                model["m"] = detector()
+                status.update(state="loading", error=None, since=t)
+                log.info("loading the AI models, the first time they are downloaded and this can take several minutes")
+                try:
+                    model["m"] = detector()
+                except Exception as e:                  # noqa: BLE001
+                    status.update(state="failed", error=f"{type(e).__name__}: {e}")
+                    raise
+                status.update(state="ready")
                 log.info("models ready in %.1fs", time.time() - t)
             return model["m"]
 
@@ -99,7 +107,10 @@ def create_service(catalog: catalog_mod.Catalog, detector: Callable[[], Accident
             sampled = sample_frames_timed(path, frames_for(video.duration_s))
             frames = [f for f, _ in sampled]
             job.total, job.times = len(frames), [t for _, t in sampled]
+            if "m" not in model:
+                job.state = "loading_models"
             det = load_model()
+            job.state = "running"
 
             def progress(i: int, n: int, score: float) -> None:
                 job.done, job.scores = i + 1, [*job.scores, score]
@@ -136,7 +147,9 @@ def create_service(catalog: catalog_mod.Catalog, detector: Callable[[], Accident
 
     @app.get("/health")
     async def health():
-        return {"ok": True, "model_loaded": "m" in model, "videos": len(catalog.videos), "jobs": len(jobs)}
+        return {"ok": True, "model_loaded": "m" in model, "model_state": status["state"], "model_error": status["error"],
+                "model_seconds": round(time.time() - status["since"]) if status["state"] == "loading" else None,
+                "videos": len(catalog.videos), "jobs": len(jobs)}
 
     @app.post("/v1/analyze", status_code=202)
     async def analyze(body: AnalyzeBody):
@@ -155,15 +168,15 @@ def create_service(catalog: catalog_mod.Catalog, detector: Callable[[], Accident
             jobs.pop(old, None)
         del order[:-50]
         pool.submit(run, job)
-        return job.view(sum(1 for j in jobs.values() if j.state in ("queued", "running")) - 1)
+        return job.view(sum(1 for j in jobs.values() if j.state in ("queued", "running", "loading_models")) - 1, dict(status))
 
     @app.get("/v1/jobs/{job_id}")
     async def get_job(job_id: str):
         job = jobs.get(job_id)
         if job is None:
             raise HTTPException(404, "unknown job")
-        ahead = sum(1 for j in jobs.values() if j.state in ("queued", "running") and j.created < job.created) if job.state == "queued" else 0
-        return job.view(ahead)
+        ahead = sum(1 for j in jobs.values() if j.state in ("queued", "running", "loading_models") and j.created < job.created) if job.state == "queued" else 0
+        return job.view(ahead, dict(status))
 
     return app
 

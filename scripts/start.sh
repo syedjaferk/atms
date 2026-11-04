@@ -33,8 +33,10 @@ in_use() {   # true when something already listens on this port, whether or not 
   fi
 }
 
-port="${CORE_PORT:-8000}"
-while in_use "$port"; do
+# if this system is already running, keep its port instead of moving it
+running=$(docker compose port core 8000 2>/dev/null | awk -F: '{print $NF}')
+port="${CORE_PORT:-${running:-8000}}"
+while [ "$port" != "$running" ] && in_use "$port"; do
   echo "Port $port is taken, trying the next one."
   port=$((port + 1))
 done

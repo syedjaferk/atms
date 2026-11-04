@@ -97,6 +97,10 @@ services:
       ATMS_DATASET_DIR: /data/dataset
       ATMS_VIDEO_DIR: /data/videos
       HF_HOME: /hf
+      HF_HUB_DOWNLOAD_TIMEOUT: "60"             # a dead connection fails with a message instead of waiting for ever
+      HF_HUB_ETAG_TIMEOUT: "30"
+      HTTP_PROXY: ${HTTP_PROXY:-}                # passed through so the first model download works behind a proxy
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
     volumes:
       - ./dataset:/data/dataset:ro
       - ${VIDEOS_DIR:-./videos}:/data/videos:ro
