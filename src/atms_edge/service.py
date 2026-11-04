@@ -86,7 +86,7 @@ def create_service(catalog: catalog_mod.Catalog, detector: Callable[[], Accident
             if "m" not in model:
                 t = time.time()
                 status.update(state="loading", error=None, since=t)
-                log.info("loading the AI models, the first time they are downloaded and this can take several minutes")
+                log.info("loading the AI models from disk")
                 try:
                     model["m"] = detector()
                 except Exception as e:                  # noqa: BLE001

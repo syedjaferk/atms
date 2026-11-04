@@ -38,12 +38,12 @@ def main() -> int:
                     break
                 if (j.get("model") or {}).get("state") == "failed":
                     print(f"The AI models could not be loaded, so nothing can be checked. {j['model']['error']}")
-                    print("The detector needs internet the first time. See docker compose logs detector.")
+                    print("The models are part of the detector image. See docker compose logs detector.")
                     return 1
                 if time.monotonic() > end:
                     print(f"{vid}: gave up after {args.timeout} s, the job was still {j['state']}. See docker compose logs detector.")
                     return 1
-                note = {"loading_models": "loading the AI models, the first time this downloads them",
+                note = {"loading_models": "loading the AI models, this takes about a minute",
                         "queued": "waiting in the queue", "running": f"looking at {j['frames_total'] or 'the'} frames"}[j["state"]]
                 if note != last:
                     print(f"{vid}: {note}")

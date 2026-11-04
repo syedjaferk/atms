@@ -14,7 +14,7 @@ scripts/start.sh
 
 It checks that Docker runs, picks a free port for the console so a clash cannot stop it, starts everything, and prints the address. If something fails to start it shows the status and the last log lines of every part, so you see why. `docker compose up --build` does the same on port 8000.
 
-The first run builds the images (the detector image holds PyTorch, so it is large) and downloads the AI models, which took about a minute and a half to start on a fresh machine once the images were built. Allow ten to twenty minutes in total on a slow connection. Later runs start in under a minute. When the console is up, open it.
+The first run builds the images. The detector image holds PyTorch and the two AI models, which are downloaded while the image is built, so it is large (a few gigabytes) and the build needs internet. Allow ten to twenty minutes on a slow connection. After that nothing needs the internet to start, and the AI models load from disk in about a minute. When the console is up, open it.
 
 ```
 http://localhost:8000/console/        token  ops-dev      (the script prints the real port)
@@ -98,13 +98,7 @@ Rebuild the catalog after adding videos.
 scripts/start.sh                     # everything for the demo, picks a free port
 docker compose logs -f core detector # watch two of them
 scripts/start.sh seed                # put a few real incidents on the controller
-scripts/start.sh stop                # stop, keeps the downloaded models
-```
-
-If the AI models are already on your machine, point the detector at them and skip the download.
-
-```bash
-HF_CACHE=$HOME/.cache/huggingface docker compose up --build
+scripts/start.sh stop                # stop everything
 ```
 
 Other folders for your videos go in `VIDEOS_DIR`, and every published port can be changed, see `.env.example`.
@@ -142,7 +136,7 @@ ATMS_SMS_URL=http://localhost:9200 ATMS_DETECTOR_URL=http://localhost:8300 \
 | The CCTV page says a video file is missing | The `videos/` folder is not on this machine. Your own recordings are not in git. Put them in `videos/` and run `scripts/build_dataset.py`, or ignore them, the labelled clips in `dataset/clips/` still work. |
 | Map has no speed colours outside Pune | Expected. Road sensors are simulated for Pune only. |
 | No forecast, `no forecast model` in the core log | The model folder `models/` is empty. Train one with `python -m atms_forecast.train --registry models --days 70`. A trained one is in git. |
-| CCTV page says the AI models are loading, or a check keeps waiting | The detector downloads the AI models the first time, which needs internet and can take several minutes. The page shows how long it has been loading, and shows the error if it fails. Watch `docker compose logs -f detector`. Behind a proxy, set `HTTP_PROXY` and `HTTPS_PROXY` in your shell before starting. |
+| CCTV page says the AI models are loading, or a check keeps waiting | The detector loads its two AI models from disk when it starts, which takes about a minute on a normal machine and longer on a slow one. The page shows how long it has been loading and shows the error if it fails. Watch `docker compose logs -f detector`. If you see an error about a missing model, the image was built without them, run `docker compose build --no-cache detector` with internet. |
 
 ## The three pages
 
@@ -186,7 +180,6 @@ curl -X POST localhost:8300/v1/analyze -H 'content-type: application/json' -d '{
 | `ATMS_TOKENS` | core | Tokens as JSON. Unset uses development tokens | development tokens |
 | `ATMS_SIGNING_SECRET` | core | Signs video links | `dev-secret` |
 | `ATMS_BROKER_HOST` | detector | Broker the alarm is published to | `localhost` |
-| `HF_HOME` | detector | Where the AI models are cached | `~/.cache/huggingface` |
 
 The development tokens (`ops-dev`, `sensor-dev` and one per agency) and secrets are for local use only. Set your own before putting this anywhere shared.
 

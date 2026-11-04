@@ -118,9 +118,9 @@ function runView() {
   const parts = [];
   const m = j.model || {};
   if (m.state === "failed" && !["done"].includes(j.state))
-    parts.push(h("p", { class: "error" }, `The AI models could not be loaded. ${m.error || ""} Check the detector log, it needs internet the first time to download them.`));
+    parts.push(h("p", { class: "error" }, `The AI models could not be loaded. ${m.error || ""} Check the detector log, the models are part of its image.`));
   if (j.state === "queued") parts.push(h("p", { class: "muted" }, j.queue_position ? `Waiting, ${j.queue_position} other job${j.queue_position === 1 ? "" : "s"} ahead of this one.` : "Waiting for the detector to pick this up."));
-  if (j.state === "loading_models") parts.push(h("p", { class: "muted" }, "Loading the AI models. The first time they are downloaded, which can take several minutes. Nothing is wrong, this only happens once."));
+  if (j.state === "loading_models") parts.push(h("p", { class: "muted" }, "Loading the AI models from disk. This takes about a minute when the detector starts, longer on a slow machine. Nothing is wrong."));
   if (j.state !== "queued" && j.state !== "loading_models") {
     parts.push(h("p", { class: "muted" }, j.state === "running" ? `Looking at frame ${j.frames_done} of ${j.frames_total || "?"}` : `Looked at ${j.frames_total} frames in ${j.seconds} s`));
     const scores = j.frame_scores || [];

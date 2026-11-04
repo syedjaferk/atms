@@ -143,7 +143,7 @@ The page draws each unit on the real road. It asks a public routing service (OSR
 
 | You see | Likely reason |
 |---|---|
-| CCTV page says the detector node is offline | The container is still starting or the models are still downloading. Check `docker compose logs detector`. |
+| CCTV page says the detector node is offline | The container is still starting or the models are still loading. Check `docker compose logs detector`. |
 | The AI says no accident for a bad video | The model is not accurate. The label may also be a guess, see [dataset.md](dataset.md). |
 | Incident stays `detected` | The AI was below 90 percent or the crash was minor. Verify it as an operator. |
 | SMS notice stays pending or fails | `ATMS_SMS_URL` is not set, or the SMS gateway is down. |

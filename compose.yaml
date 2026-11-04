@@ -9,7 +9,7 @@
 #   core       bridge, incident service, dispatch, notifications, forecast, API and the web console
 #   agencies   fake police, ambulance, fire, highway patrol and tow dispatch systems
 #   sms        fake SMS gateway that sends delivery receipts back
-#   detector   the edge node: runs the AI models on a video and publishes the alarm
+#   detector   the edge node: runs the AI models (baked into its image) on a video and publishes the alarm
 #   sensors    one shot, sends a few hours of road readings so the forecast has something to show
 # Optional, add --profile durable and -f compose.durable.yaml
 #   kafka, postgres   services talk over Kafka and state survives a restart
@@ -96,16 +96,10 @@ services:
       ATMS_MEDIA_DIR: /data/media
       ATMS_DATASET_DIR: /data/dataset
       ATMS_VIDEO_DIR: /data/videos
-      HF_HOME: /hf
-      HF_HUB_DOWNLOAD_TIMEOUT: "60"             # a dead connection fails with a message instead of waiting for ever
-      HF_HUB_ETAG_TIMEOUT: "30"
-      HTTP_PROXY: ${HTTP_PROXY:-}                # passed through so the first model download works behind a proxy
-      HTTPS_PROXY: ${HTTPS_PROXY:-}
     volumes:
       - ./dataset:/data/dataset:ro
       - ${VIDEOS_DIR:-./videos}:/data/videos:ro
       - media:/data/media
-      - ${HF_CACHE:-hf-cache}:/hf                # the AI models, downloaded once
     healthcheck:
       test: ["CMD", "python", "/probe.py", "http://127.0.0.1:8300/health"]
       interval: 5s
@@ -179,4 +173,3 @@ services:
 volumes:
   pgdata:
   media:
-  hf-cache:
