@@ -21,6 +21,7 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--api", default="http://localhost:8000")
     p.add_argument("--token", default="ops-dev")
+    p.add_argument("--timeout", type=int, default=900, help="seconds to wait for each video before giving up")
     p.add_argument("videos", nargs="*", default=DEFAULTS, help="catalog video ids")
     args = p.parse_args()
     with httpx.Client(base_url=args.api, headers={"Authorization": f"Bearer {args.token}"}, timeout=15) as api:
@@ -30,10 +31,23 @@ def main() -> int:
                 print(f"{vid}: refused ({r.status_code} {r.text[:120]})")
                 continue
             job = r.json()["job_id"]
+            end, last = time.monotonic() + args.timeout, ""
             while True:
                 j = api.get(f"/v1/cctv/jobs/{job}").json()
                 if j["state"] in ("done", "failed"):
                     break
+                if (j.get("model") or {}).get("state") == "failed":
+                    print(f"The AI models could not be loaded, so nothing can be checked. {j['model']['error']}")
+                    print("The detector needs internet the first time. See docker compose logs detector.")
+                    return 1
+                if time.monotonic() > end:
+                    print(f"{vid}: gave up after {args.timeout} s, the job was still {j['state']}. See docker compose logs detector.")
+                    return 1
+                note = {"loading_models": "loading the AI models, the first time this downloads them",
+                        "queued": "waiting in the queue", "running": f"looking at {j['frames_total'] or 'the'} frames"}[j["state"]]
+                if note != last:
+                    print(f"{vid}: {note}")
+                    last = note
                 time.sleep(2)
             v = j.get("verdict") or {}
             if j["state"] == "failed":
