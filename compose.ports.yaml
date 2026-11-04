@@ -1,0 +1,15 @@
+# Publishes the inner ports on this machine, for the command line tools and for looking inside.
+#   docker compose -f compose.yaml -f compose.ports.yaml up -d
+# Change a port with an environment variable if it clashes. See .env.example.
+services:
+  rabbitmq:
+    ports:
+      - "${MQTT_PORT:-1883}:1883"           # MQTT, what the cameras use
+      - "${AMQP_PORT:-5672}:5672"           # AMQP, what the bridge uses
+      - "${RABBIT_UI_PORT:-15672}:15672"    # management page
+  agencies:
+    ports: ["${AGENCIES_PORT:-9100}:9100"]
+  sms:
+    ports: ["${SMS_PORT:-9200}:9200"]
+  detector:
+    ports: ["${DETECTOR_PORT:-8300}:8300"]

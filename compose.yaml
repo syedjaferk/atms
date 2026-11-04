@@ -1,6 +1,8 @@
 # ATMS, every part as its own container.
 #
-#   docker compose up --build        everything for the demo, then open http://localhost:8000/console/
+#   scripts/start.sh                 picks a free port and starts everything
+#   docker compose up --build        the same on port 8000. Only the console port is published, nothing else can clash.
+#   add -f compose.ports.yaml        to also publish the broker, agencies, SMS and detector ports for command line tools
 #
 # Parts
 #   rabbitmq   the MQTT broker the cameras publish to
@@ -15,10 +17,6 @@ name: atms
 services:
   rabbitmq:
     image: rabbitmq:4-management
-    ports:
-      - "${MQTT_PORT:-1883}:1883"     # MQTT, what the cameras use
-      - "${AMQP_PORT:-5672}:5672"     # AMQP, what the bridge uses
-      - "${RABBIT_UI_PORT:-15672}:15672"   # management UI
     environment:
       RABBITMQ_DEFAULT_USER: atms
       RABBITMQ_DEFAULT_PASS: atms-dev
@@ -35,7 +33,6 @@ services:
     build: { context: ., dockerfile: docker/core.Dockerfile }
     image: atms-core
     command: ["python", "-m", "atms_sim.cli", "agencies", "--port", "9100", "--reliable"]
-    ports: ["${AGENCIES_PORT:-9100}:9100"]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:9100/v1/agencies/notices')"]
       interval: 5s
@@ -47,7 +44,6 @@ services:
     image: atms-core
     command: ["python", "-m", "atms_sim.cli", "sms", "--port", "9200"]
     depends_on: { agencies: { condition: service_started } }
-    ports: ["${SMS_PORT:-9200}:9200"]
 
   core:
     build: { context: ., dockerfile: docker/core.Dockerfile }
@@ -90,7 +86,6 @@ services:
       ATMS_DATASET_DIR: /data/dataset
       ATMS_VIDEO_DIR: /data/videos
       HF_HOME: /hf
-    ports: ["${DETECTOR_PORT:-8300}:8300"]
     volumes:
       - ./dataset:/data/dataset:ro
       - ${VIDEOS_DIR:-./videos}:/data/videos:ro

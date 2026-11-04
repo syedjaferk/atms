@@ -9,13 +9,15 @@ Every part runs as its own container, so you can start the whole thing with one 
 You need Docker with Compose, about 6 GB of free disk, and the `videos/` folder with your recordings next to this file.
 
 ```bash
-docker compose up --build
+scripts/start.sh
 ```
+
+It checks that Docker runs, picks a free port for the console so a clash cannot stop it, starts everything, and prints the address. If something fails to start it shows the status and the last log lines of every part, so you see why. `docker compose up --build` does the same on port 8000.
 
 The first run builds the images (the detector image holds PyTorch, so it is large) and downloads the AI models, which took about a minute and a half to start on a fresh machine once the images were built. Allow ten to twenty minutes in total on a slow connection. Later runs start in under a minute. When the console is up, open it.
 
 ```
-http://localhost:8000/console/        token  ops-dev
+http://localhost:8000/console/        token  ops-dev      (the script prints the real port)
 ```
 
 1. Open the **CCTV** page. Pick a city at the top of the map, then pick a camera.
@@ -50,13 +52,15 @@ If the AI is below 90 percent sure, a person has to verify first. That is on pur
 
 | Part | Container | Port | What it does | Code |
 |---|---|---|---|---|
-| Broker | `rabbitmq` | 1883, 15672 | Receives camera events over MQTT | `rabbitmq/` |
+| Broker | `rabbitmq` | inside only | Receives camera events over MQTT | `rabbitmq/` |
 | Core | `core` | 8000 | Incident service, dispatch, notices, forecast, API and the web console | `src/atms_core/` |
-| Detector node | `detector` | 8300 | Runs the AI models on a video and publishes the alarm | `src/atms_edge/` |
-| Agencies | `agencies` | 9100 | Pretend police, ambulance, fire, highway patrol and tow systems | `src/atms_sim/agencies.py` |
-| SMS gateway | `sms` | 9200 | Pretend SMS provider that sends delivery receipts | `src/atms_sim/sms.py` |
+| Detector node | `detector` | inside only | Runs the AI models on a video and publishes the alarm | `src/atms_edge/` |
+| Agencies | `agencies` | inside only | Pretend police, ambulance, fire, highway patrol and tow systems | `src/atms_sim/agencies.py` |
+| SMS gateway | `sms` | inside only | Pretend SMS provider that sends delivery receipts | `src/atms_sim/sms.py` |
 | Sensors | `sensors` | none | Runs once and sends a few hours of road readings for the forecast | `src/atms_sim/sensors.py` |
 | Kafka and Postgres | `kafka`, `postgres` | 9092, 5433 | Optional, see below | `compose.durable.yaml` |
+
+Only the core publishes a port on your machine, so the other parts cannot clash with anything you already run. To reach them from the command line, add `-f compose.ports.yaml` (broker 1883 and 15672, agencies 9100, SMS 9200, detector 8300).
 
 The browser only talks to the core. The core talks to the detector node, and the detector node talks to the broker, exactly like a camera box in the field would.
 
@@ -91,9 +95,9 @@ Rebuild the catalog after adding videos.
 ### With Docker, the normal way
 
 ```bash
-docker compose up --build            # everything for the demo
+scripts/start.sh                     # everything for the demo, picks a free port
 docker compose logs -f core detector # watch two of them
-docker compose down                  # stop, keeps the downloaded models
+scripts/start.sh stop                # stop, keeps the downloaded models
 ```
 
 If the AI models are already on your machine, point the detector at them and skip the download.
@@ -104,7 +108,7 @@ HF_CACHE=$HOME/.cache/huggingface docker compose up --build
 
 Other folders for your videos go in `VIDEOS_DIR`, and every published port can be changed, see `.env.example`.
 
-If Docker says a port is already allocated, something else on your machine uses it. Find it with `docker ps` or `ss -ltnp`, then pick another port, for example `CORE_PORT=8001 docker compose up`. The console is then at `http://localhost:8001/console/`.
+Only the console port is published, and `scripts/start.sh` picks a free one. If you use `docker compose up` yourself and Docker says a port is already allocated, set another, for example `CORE_PORT=8001 docker compose up`.
 
 ### With Docker, with Kafka and Postgres
 
@@ -133,7 +137,7 @@ ATMS_SMS_URL=http://localhost:9200 ATMS_DETECTOR_URL=http://localhost:8300 \
 
 | You see | Reason and fix |
 |---|---|
-| `port is already allocated` | Another program uses that port. Set another one, for example `CORE_PORT=8001`. |
+| `port is already allocated` | Another program uses the console port. Use `scripts/start.sh`, which picks a free one, or set `CORE_PORT`. |
 | The CCTV page says a video file is missing | The `videos/` folder is not on this machine. Your own recordings are not in git. Put them in `videos/` and run `scripts/build_dataset.py`, or ignore them, the labelled clips in `dataset/clips/` still work. |
 | Map has no speed colours outside Pune | Expected. Road sensors are simulated for Pune only. |
 | No forecast, `no forecast model` in the core log | The model folder `models/` is empty. Train one with `python -m atms_forecast.train --registry models --days 70`. A trained one is in git. |
@@ -160,7 +164,7 @@ ATMS_SMS_URL=http://localhost:9200 ATMS_DETECTOR_URL=http://localhost:8300 \
 PYTHONUNBUFFERED=1 .venv/bin/python -m atms_edge.cli check videos/v4.mp4 --cameras CHN003 --publish --watch 30
 
 # ask the running detector node to do the same thing, the way the CCTV page does
-curl -X POST localhost:8300/v1/analyze -H 'content-type: application/json' -d '{"video_id": "v4"}'
+curl -X POST localhost:8300/v1/analyze        # needs -f compose.ports.yaml -H 'content-type: application/json' -d '{"video_id": "v4"}'
 ```
 
 ## Settings
@@ -189,7 +193,7 @@ The development tokens (`ops-dev`, `sensor-dev` and one per agency) and secrets 
 
 ```bash
 .venv/bin/pytest                                   # about 210 tests, no Docker needed
-docker compose --profile durable up -d --wait rabbitmq kafka postgres
+docker compose -f compose.yaml -f compose.ports.yaml --profile durable up -d --wait rabbitmq kafka postgres
 ATMS_BROKER_HOST=localhost ATMS_KAFKA=localhost:9092 ATMS_DB_URL=postgresql://atms:atms-dev@localhost:5433/atms .venv/bin/pytest -m integration
 ```
 

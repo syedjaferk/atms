@@ -18,7 +18,7 @@ Each arrow is a separate network call between separate containers. Nothing is sh
 
 `dataset/videos.json` lists every video, the camera it belongs to and whether it is a good or a bad scenario. A camera is a point on a road with a name and a heading, listed in `src/atms_contracts/data/network.json`.
 
-Look at it with `curl -H 'Authorization: Bearer ops-dev' localhost:8000/v1/cctv/cameras/CHN003/videos`.
+Look at it with `curl -H 'Authorization: Bearer ops-dev' localhost:<port>/v1/cctv/cameras/CHN003/videos`.
 
 ### 2. The detector node checks the video
 
@@ -46,7 +46,7 @@ The topic is `atms/{state}/{city}/{road}/{camera}/event/...`, so a Chennai camer
 
 Before sending, the node writes the event to a small local database. If the broker is down it keeps retrying, so a detection is not lost.
 
-Watch the broker at `http://localhost:15672` with user `atms` and password `atms-dev`.
+Watch the broker at `http://localhost:15672` with user `atms` and password `atms-dev`. Start with `-f compose.ports.yaml` so that port is published.
 
 ### 4. The core turns events into an incident
 
@@ -132,12 +132,12 @@ The page draws each unit on the real road. It asks a public routing service (OSR
 
 | Hop | How to see it |
 |---|---|
-| Detector node | `docker compose logs -f detector` and `curl localhost:8300/v1/jobs/<id>` |
-| Broker | `http://localhost:15672` |
+| Detector node | `docker compose logs -f detector` |
+| Broker | `http://localhost:15672` (start with `-f compose.ports.yaml`) |
 | Core | `docker compose logs -f core` and `http://localhost:8000/console/` |
-| What the agencies were told | `curl localhost:9100/v1/agencies/notices` |
-| Incident and units | `curl -H 'Authorization: Bearer ops-dev' localhost:8000/v1/map` |
-| Notices of one incident | `curl -H 'Authorization: Bearer ops-dev' localhost:8000/v1/incidents/<id>/notifications` |
+| What the agencies were told | `docker compose exec core python -c "import urllib.request as u; print(u.urlopen('http://agencies:9100/v1/agencies/notices').read().decode())"` |
+| Incident and units | `curl -H 'Authorization: Bearer ops-dev' localhost:<port>/v1/map` |
+| Notices of one incident | `curl -H 'Authorization: Bearer ops-dev' localhost:<port>/v1/incidents/<id>/notifications` |
 
 ## When something looks wrong
 
