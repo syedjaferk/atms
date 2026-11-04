@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 && rm 
 WORKDIR /app
 COPY requirements/core.txt requirements/core.txt
 RUN pip install -r requirements/core.txt
+COPY docker/probe.py /probe.py
 COPY src src
 ENV PYTHONPATH=/app/src
 EXPOSE 8000 9100 9200

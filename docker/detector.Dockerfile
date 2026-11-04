@@ -6,6 +6,7 @@ WORKDIR /app
 RUN pip install torch==2.15.0 torchvision==0.29.2 --index-url https://download.pytorch.org/whl/cpu
 COPY requirements/detector.txt requirements/detector.txt
 RUN pip install -r requirements/detector.txt
+COPY docker/probe.py /probe.py
 COPY src src
 ENV PYTHONPATH=/app/src
 EXPOSE 8300

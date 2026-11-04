@@ -14,6 +14,11 @@
 # Optional, add --profile durable and -f compose.durable.yaml
 #   kafka, postgres   services talk over Kafka and state survives a restart
 name: atms
+x-no-proxy: &no-proxy
+  # Traffic between the parts must never go through a proxy set for the machine. The detector still uses one to download models.
+  NO_PROXY: localhost,127.0.0.1,rabbitmq,agencies,sms,core,detector,kafka,postgres
+  no_proxy: localhost,127.0.0.1,rabbitmq,agencies,sms,core,detector,kafka,postgres
+
 services:
   rabbitmq:
     image: rabbitmq:4-management
@@ -31,16 +36,19 @@ services:
 
   agencies:
     build: { context: ., dockerfile: docker/core.Dockerfile }
+    environment: *no-proxy
     image: atms-core
     command: ["python", "-m", "atms_sim.cli", "agencies", "--port", "9100", "--reliable"]
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:9100/v1/agencies/notices')"]
+      test: ["CMD", "python", "/probe.py", "http://127.0.0.1:9100/v1/agencies/notices"]
       interval: 5s
-      timeout: 5s
-      retries: 10
+      timeout: 6s
+      retries: 20
+      start_period: 15s
 
   sms:
     build: { context: ., dockerfile: docker/core.Dockerfile }
+    environment: *no-proxy
     image: atms-core
     command: ["python", "-m", "atms_sim.cli", "sms", "--port", "9200"]
     depends_on: { agencies: { condition: service_started } }
@@ -54,6 +62,7 @@ services:
       agencies: { condition: service_healthy }
       sms: { condition: service_started }
     environment:
+      <<: *no-proxy
       ATMS_RABBIT_HOST: rabbitmq
       ATMS_AGENCIES_URL: http://agencies:9100
       ATMS_SMS_URL: http://sms:9200
@@ -70,10 +79,11 @@ services:
       - ${VIDEOS_DIR:-./videos}:/data/videos:ro
       - media:/data/media
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/healthz')"]
+      test: ["CMD", "python", "/probe.py", "http://127.0.0.1:8000/healthz"]
       interval: 5s
-      timeout: 5s
-      retries: 20
+      timeout: 6s
+      retries: 30
+      start_period: 20s
 
   detector:
     build: { context: ., dockerfile: docker/detector.Dockerfile }
@@ -81,6 +91,7 @@ services:
     depends_on:
       rabbitmq: { condition: service_healthy }
     environment:
+      <<: *no-proxy
       ATMS_BROKER_HOST: rabbitmq
       ATMS_MEDIA_DIR: /data/media
       ATMS_DATASET_DIR: /data/dataset
@@ -92,12 +103,14 @@ services:
       - media:/data/media
       - ${HF_CACHE:-hf-cache}:/hf                # the AI models, downloaded once
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8300/health')"]
+      test: ["CMD", "python", "/probe.py", "http://127.0.0.1:8300/health"]
       interval: 5s
-      timeout: 5s
-      retries: 20
+      timeout: 6s
+      retries: 30
+      start_period: 20s
 
   sensors:
+    environment: *no-proxy
     image: atms-core
     command: ["python", "-m", "atms_sim.cli", "sensors", "--api", "http://core:8000", "--minutes", "180"]
     depends_on:
