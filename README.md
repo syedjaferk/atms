@@ -164,7 +164,7 @@ ATMS_SMS_URL=http://localhost:9200 ATMS_DETECTOR_URL=http://localhost:8300 \
 PYTHONUNBUFFERED=1 .venv/bin/python -m atms_edge.cli check videos/v4.mp4 --cameras CHN003 --publish --watch 30
 
 # ask the running detector node to do the same thing, the way the CCTV page does
-curl -X POST localhost:8300/v1/analyze        # needs -f compose.ports.yaml -H 'content-type: application/json' -d '{"video_id": "v4"}'
+curl -X POST localhost:8300/v1/analyze -H 'content-type: application/json' -d '{"video_id": "v4"}'    # start with -f compose.ports.yaml
 ```
 
 ## Settings
