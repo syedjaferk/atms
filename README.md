@@ -97,6 +97,7 @@ Rebuild the catalog after adding videos.
 ```bash
 scripts/start.sh                     # everything for the demo, picks a free port
 docker compose logs -f core detector # watch two of them
+scripts/start.sh seed                # put a few real incidents on the controller
 scripts/start.sh stop                # stop, keeps the downloaded models
 ```
 

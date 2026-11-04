@@ -109,6 +109,19 @@ services:
       retries: 30
       start_period: 20s
 
+  seed:
+    # Not started by default. `scripts/start.sh seed` runs it once to put a few real incidents on the controller.
+    profiles: [demo]
+    image: atms-core
+    command: ["python", "/scripts/seed_demo.py", "--api", "http://core:8000"]
+    environment: *no-proxy
+    depends_on:
+      core: { condition: service_healthy }
+      detector: { condition: service_healthy }
+    volumes:
+      - ./scripts:/scripts:ro
+    restart: "no"
+
   sensors:
     environment: *no-proxy
     image: atms-core

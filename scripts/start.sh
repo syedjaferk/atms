@@ -3,6 +3,7 @@
 # and shows what went wrong if something does not start.
 #
 #   scripts/start.sh            start
+#   scripts/start.sh seed       put a few real incidents on the controller (needs it running)
 #   scripts/start.sh stop       stop
 #
 # Set CORE_PORT yourself to ask for a particular port. HF_CACHE reuses AI models already on this machine.
@@ -12,6 +13,13 @@ cd "$(dirname "$0")/.."
 if ! docker info >/dev/null 2>&1; then
   echo "Docker is not running. Start Docker Desktop or the docker service, then run this again." >&2
   exit 1
+fi
+if [ "${1:-}" = "seed" ]; then
+  # keep the port the running console already uses, or compose would try to recreate it on another one
+  running=$(docker compose port core 8000 2>/dev/null | awk -F: '{print $NF}')
+  [ -n "$running" ] && export CORE_PORT="$running"
+  docker compose --profile demo run --rm --no-deps seed
+  exit $?
 fi
 if [ "${1:-}" = "stop" ]; then
   docker compose down
