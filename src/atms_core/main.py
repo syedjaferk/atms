@@ -83,7 +83,11 @@ def build_forecast(repo):
     from atms_forecast.registry import Registry
     from atms_forecast.service import ForecastService
 
-    version, model = Registry(directory).load()
+    try:
+        version, model = Registry(directory).load()
+    except LookupError:
+        log.warning("no forecast model in %s (train one with python -m atms_forecast.train), congestion forecasting is off", directory)
+        return None
     report = Registry(directory).report(version)["backtest"]
     store = PostgresObservationStore(repo) if repo is not None else MemoryObservationStore()
     log.info("forecasting with model %s", version)

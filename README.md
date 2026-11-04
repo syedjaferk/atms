@@ -102,7 +102,9 @@ If the AI models are already on your machine, point the detector at them and ski
 HF_CACHE=$HOME/.cache/huggingface docker compose up --build
 ```
 
-Other folders for your videos go in `VIDEOS_DIR`, see `.env.example`.
+Other folders for your videos go in `VIDEOS_DIR`, and every published port can be changed, see `.env.example`.
+
+If Docker says a port is already allocated, something else on your machine uses it. Find it with `docker ps` or `ss -ltnp`, then pick another port, for example `CORE_PORT=8001 docker compose up`. The console is then at `http://localhost:8001/console/`.
 
 ### With Docker, with Kafka and Postgres
 
@@ -126,6 +128,16 @@ ATMS_SMS_URL=http://localhost:9200 ATMS_DETECTOR_URL=http://localhost:8300 \
 .venv/bin/python -m atms_edge.service &
 .venv/bin/python -m atms_sim.cli sensors --minutes 180
 ```
+
+## If something does not start
+
+| You see | Reason and fix |
+|---|---|
+| `port is already allocated` | Another program uses that port. Set another one, for example `CORE_PORT=8001`. |
+| The CCTV page says a video file is missing | The `videos/` folder is not on this machine. Your own recordings are not in git. Put them in `videos/` and run `scripts/build_dataset.py`, or ignore them, the labelled clips in `dataset/clips/` still work. |
+| Map has no speed colours outside Pune | Expected. Road sensors are simulated for Pune only. |
+| No forecast, `no forecast model` in the core log | The model folder `models/` is empty. Train one with `python -m atms_forecast.train --registry models --days 70`. A trained one is in git. |
+| Detector stays at `loading` for minutes | It is downloading the AI models. Watch `docker compose logs -f detector`. |
 
 ## The three pages
 

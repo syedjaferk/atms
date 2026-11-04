@@ -4,5 +4,4 @@ __pycache__/
 .pytest_cache/
 simulator-out/
 *.sqlite3
-models/
 videos

@@ -1,0 +1,91 @@
+{
+  "backtest": {
+    "test_from": "2026-07-26 18:25:00+00:00",
+    "test_to": "2026-08-09 18:25:00+00:00",
+    "horizons": {
+      "15": {
+        "rows": 24180,
+        "mae": {
+          "model": 2.1333588111043853,
+          "persistence": 3.2845220886453976,
+          "typical_for_time": 3.9260536429939368
+        },
+        "rmse_model": 3.250244822984089,
+        "skill_vs_persistence": 0.35048121049956926,
+        "skill_vs_typical": 0.4566149612063056,
+        "level_accuracy": 0.9664598842018197,
+        "level_accuracy_persistence": 0.9395368072787428,
+        "heavy_or_worse": {
+          "share_of_rows": 0.03110008271298594,
+          "recall": 0.8617021276595744,
+          "precision": 0.8275862068965517,
+          "recall_persistence": 0.7593085106382979
+        },
+        "interval_coverage_80": 0.7892059553349876,
+        "interval_width_kmh": 6.465607109220643,
+        "during_incidents": {
+          "rows": 416,
+          "mae_model": 5.430435120618878,
+          "mae_persistence": 7.912883181449221,
+          "mae_typical": 31.642867669074995
+        }
+      },
+      "30": {
+        "rows": 24162,
+        "mae": {
+          "model": 2.5607032778331633,
+          "persistence": 4.4460983219063355,
+          "typical_for_time": 3.9272191641914236
+        },
+        "rmse_model": 4.683440361533136,
+        "skill_vs_persistence": 0.42405608413643425,
+        "skill_vs_typical": 0.34796017976745963,
+        "level_accuracy": 0.9509560466848771,
+        "level_accuracy_persistence": 0.8967386805728003,
+        "heavy_or_worse": {
+          "share_of_rows": 0.03112325138647463,
+          "recall": 0.773936170212766,
+          "precision": 0.697841726618705,
+          "recall_persistence": 0.5704787234042553
+        },
+        "interval_coverage_80": 0.7845377038324642,
+        "interval_width_kmh": 7.1065860359374105,
+        "during_incidents": {
+          "rows": 416,
+          "mae_model": 8.855264285405987,
+          "mae_persistence": 13.003687073571381,
+          "mae_typical": 26.956120778229362
+        }
+      },
+      "60": {
+        "rows": 24126,
+        "mae": {
+          "model": 3.2635977228794655,
+          "persistence": 6.61287872049441,
+          "typical_for_time": 3.930362931446737
+        },
+        "rmse_model": 6.463818386263537,
+        "skill_vs_persistence": 0.5064785155117039,
+        "skill_vs_typical": 0.16964469190173248,
+        "level_accuracy": 0.9265522672635331,
+        "level_accuracy_persistence": 0.8345768051065241,
+        "heavy_or_worse": {
+          "share_of_rows": 0.031169692447981432,
+          "recall": 0.6436170212765957,
+          "precision": 0.510548523206751,
+          "recall_persistence": 0.2712765957446808
+        },
+        "interval_coverage_80": 0.7764237751803034,
+        "interval_width_kmh": 8.277338089395224,
+        "during_incidents": {
+          "rows": 416,
+          "mae_model": 10.597658478781264,
+          "mae_persistence": 21.698098634565476,
+          "mae_typical": 15.658698127294768
+        }
+      }
+    }
+  },
+  "note": "synthetic traffic, seed 7, 70 days",
+  "registered_at": "2026-11-01T07:49:18.054857+00:00"
+}

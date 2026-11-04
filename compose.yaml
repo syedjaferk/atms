@@ -16,9 +16,9 @@ services:
   rabbitmq:
     image: rabbitmq:4-management
     ports:
-      - "1883:1883"     # MQTT, what the cameras use
-      - "5672:5672"     # AMQP, what the bridge uses
-      - "15672:15672"   # management UI
+      - "${MQTT_PORT:-1883}:1883"     # MQTT, what the cameras use
+      - "${AMQP_PORT:-5672}:5672"     # AMQP, what the bridge uses
+      - "${RABBIT_UI_PORT:-15672}:15672"   # management UI
     environment:
       RABBITMQ_DEFAULT_USER: atms
       RABBITMQ_DEFAULT_PASS: atms-dev
@@ -35,7 +35,7 @@ services:
     build: { context: ., dockerfile: docker/core.Dockerfile }
     image: atms-core
     command: ["python", "-m", "atms_sim.cli", "agencies", "--port", "9100", "--reliable"]
-    ports: ["9100:9100"]
+    ports: ["${AGENCIES_PORT:-9100}:9100"]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:9100/v1/agencies/notices')"]
       interval: 5s
@@ -43,12 +43,14 @@ services:
       retries: 10
 
   sms:
+    build: { context: ., dockerfile: docker/core.Dockerfile }
     image: atms-core
     command: ["python", "-m", "atms_sim.cli", "sms", "--port", "9200"]
     depends_on: { agencies: { condition: service_started } }
-    ports: ["9200:9200"]
+    ports: ["${SMS_PORT:-9200}:9200"]
 
   core:
+    build: { context: ., dockerfile: docker/core.Dockerfile }
     image: atms-core
     command: ["python", "-m", "atms_core.main"]
     depends_on:
@@ -65,7 +67,7 @@ services:
       ATMS_DATASET_DIR: /data/dataset
       ATMS_VIDEO_DIR: /data/videos
       ATMS_DETECTOR_URL: http://detector:8300
-    ports: ["8000:8000"]
+    ports: ["${CORE_PORT:-8000}:8000"]
     volumes:
       - ./models:/app/models:ro
       - ./dataset:/data/dataset:ro
@@ -88,7 +90,7 @@ services:
       ATMS_DATASET_DIR: /data/dataset
       ATMS_VIDEO_DIR: /data/videos
       HF_HOME: /hf
-    ports: ["8300:8300"]
+    ports: ["${DETECTOR_PORT:-8300}:8300"]
     volumes:
       - ./dataset:/data/dataset:ro
       - ${VIDEOS_DIR:-./videos}:/data/videos:ro
